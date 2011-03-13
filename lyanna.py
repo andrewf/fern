@@ -7,18 +7,22 @@ number = Rep1(Range('09'))
 string = Str("'") + Rep(AnyBut("'")) + Str("'")
 
 lexicon = Lexicon([
-    (Str('}'), 'map_end'),
-    (Str('{'), 'map_start'),
-    (Str('['), 'list_start'),
-    (Str(']'), 'list_end'),
-    (Str('='), 'assign'),
-    (Str('@'), 'at_sign'),
-    (Str('True'),'true'),
-    (Str('False'),'false'),
-    (Any(' \n\t'), IGNORE),
-    (number, 'number'),
-    (string, 'string'),
-    (identifier, 'ident'),
+    (Str('}'),      'map_end'),
+    (Str('{'),      'map_start'),
+    (Str('['),      'list_start'),
+    (Str(']'),      'list_end'),
+    (Str('='),      'assign'),
+    (Str('@'),      'at_sign'),
+    (Str('True'),   'true'),
+    (Str('False'),  'false'),
+    (Str('if'),     TEXT),
+    (Str('then'),   TEXT),
+    (Str('else'),   TEXT),
+    (Str('end'),    TEXT),
+    (Any(' \n\t'),  IGNORE),
+    (number,        'number'),
+    (string,        'string'),
+    (identifier,    'ident'),
 ])
 
 class IdKey(tuple):
@@ -59,6 +63,26 @@ class List(object):
         self.d[k] = v
     def put(self, v):
         self.l.append(v)
+
+class IfGenerator(object):
+    def __init__(self):
+        self.cond = None
+        self.first = None
+        self.second = None
+    def put(self, item):
+        if self.cond is None:
+            self.cond = item
+        elif self.first is None:
+            self.first = item
+        elif self.second is None:
+            self.second = item
+        else:
+            raise ValueError('too much stuff in if')
+    def get(self):
+        if self.cond:
+            return self.first
+        else:
+            return self.second
 
 def hashable_key(obj):
     'Makes sure the obj is hashable, wrapping in IdKey if needed'
@@ -138,6 +162,10 @@ class Builder:
     def start_list(self):
         self.items.append(List())
     def end_list(self):
+        self.finish_item()
+    def start_if(self):
+        self.items.append(IfGenerator())
+    def end_if(self):
         self.finish_item()
     def finish_item(self):
         it = self.items.pop()
@@ -226,6 +254,25 @@ def match_bool(scanner, builder):
     else:
         return False
 
+def match_if(scanner, builder):
+    if not scanner.match('if'):
+        return False
+    builder.start_if()
+    if not expression(scanner, builder):
+        raise ValueError('invalid condition in if')
+    if not scanner.match('then'):
+        raise ValueError('must follow if condition with \'then\'')
+    if not expression(scanner, builder):
+        raise ValueError('must have expr after then')
+    if not scanner.match('else'):
+        raise ValueError('expected "else"')
+    if not expression(scanner, builder):
+        raise ValueError('expected else expression')
+    if not scanner.match('end'):
+        raise ValueError('expected "end" of if')
+    builder.end_if()
+    return True
+
 def expression(scanner, builder):
     text = scanner.text
     #print 'matching expr token', scanner.next_token
@@ -241,6 +288,8 @@ def expression(scanner, builder):
     elif match_list(scanner, builder):
         return True
     elif match_bool(scanner, builder):
+        return True
+    elif match_if(scanner, builder):
         return True
     elif scanner.match('ident'):
         builder.put(builder.reference(text))

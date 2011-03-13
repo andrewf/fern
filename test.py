@@ -62,6 +62,18 @@ class ScopeAndReferences(unittest.TestCase):
         obj = lyanna.parse("var = 42 foo = [ 13 'junk'  {var = 17 baz = var}]")
         self.assertEqual(obj['foo'][2]['baz'], 17)    
 
+class Generators(unittest.TestCase):
+    def testSimpleIf(self):
+        obj = lyanna.parse("foo = if True then 3 else 4 end "
+                           "bar = if False then 3 else 4 end")
+        self.assertTrue(isinstance(obj['foo'], lyanna.IfGenerator))
+        self.assertEqual(obj['foo'].get(), 3)
+        self.assertTrue(isinstance(obj['bar'], lyanna.IfGenerator))
+        self.assertEqual(obj['bar'].get(), 4)
+    def testVariableIf(self):
+        obj = lyanna.parse("foo = False baz = if foo then 13 else 42 end")
+        self.assertEqual(obj['baz'].get(), 42)
+
 class testMap(unittest.TestCase):
 	def testMapAsKey(self):
 		k = lyanna.Map()
