@@ -42,6 +42,25 @@ class testParse(unittest.TestCase):
 		idkey = obj.d.keys()[0]
 		key = idkey[0]
 		self.assertEqual(obj[key], 13)
+	def testBoolValue(self):
+		obj = lyanna.parse("t = True f = False")
+		self.assertEqual(obj['t'], True)
+		self.assertEqual(obj['f'], False)
+
+class ScopeAndReferences(unittest.TestCase):
+    def testReference(self):
+        obj = lyanna.parse("one = 42 two = one")
+        self.assertEqual(obj['one'], 42)
+        self.assertEqual(obj['two'], 42)
+    def testScope1(self):
+        obj = lyanna.parse("var = 42 foo = {baz = var}")
+        self.assertEqual(obj['foo']['baz'], 42)
+    def testLexicalScope(self):
+        obj = lyanna.parse("var = 42 foo = {var = 13 baz = var}")
+        self.assertEqual(obj['foo']['baz'], 13)
+    def testLexicalScope2(self):
+        obj = lyanna.parse("var = 42 foo = [ 13 'junk'  {var = 17 baz = var}]")
+        self.assertEqual(obj['foo'][2]['baz'], 17)    
 
 class testMap(unittest.TestCase):
 	def testMapAsKey(self):

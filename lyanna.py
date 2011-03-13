@@ -7,24 +7,26 @@ number = Rep1(Range('09'))
 string = Str("'") + Rep(AnyBut("'")) + Str("'")
 
 lexicon = Lexicon([
-    (identifier, 'ident'),
     (Str('}'), 'map_end'),
     (Str('{'), 'map_start'),
     (Str('['), 'list_start'),
     (Str(']'), 'list_end'),
     (Str('='), 'assign'),
     (Str('@'), 'at_sign'),
+    (Str('True'),'true'),
+    (Str('False'),'false'),
     (Any(' \n\t'), IGNORE),
     (number, 'number'),
-    (string, 'string')
+    (string, 'string'),
+    (identifier, 'ident'),
 ])
 
 class IdKey(tuple):
-	'''
-	Wrap a mutable object in this to allow it to be used as a dict key.
-	Compares by identity.'''
-	def __new__(cls, obj):
-		return tuple.__new__(cls, (obj,))
+    '''
+    Wrap a mutable object in this to allow it to be used as a dict key.
+    Compares by identity.'''
+    def __new__(cls, obj):
+        return tuple.__new__(cls, (obj,))
 
 class Map(object):
     '''
@@ -43,6 +45,8 @@ class Map(object):
     def put(self, kvpair):
         assert(isinstance(kvpair, KVPair))
         self[kvpair.key] = kvpair.value
+    def __contains__(self, item):
+        return item in self.d
 
 class List(object):
     def __init__(self):
@@ -57,12 +61,12 @@ class List(object):
         self.l.append(v)
 
 def hashable_key(obj):
-	'Makes sure the obj is hashable, wrapping in IdKey if needed'
-	# actually, it's not that picky. Just makes sure to wrap Map and List
-	if isinstance(obj, (Map, List)):
-		return IdKey(obj)
-	else:
-		return obj
+    'Makes sure the obj is hashable, wrapping in IdKey if needed'
+    # actually, it's not that picky. Just makes sure to wrap Map and List
+    if isinstance(obj, (Map, List)):
+        return IdKey(obj)
+    else:
+        return obj
 
 class MatchScanner(Scanner):
     def __init__(self, *args, **kwargs):
@@ -110,6 +114,13 @@ class Builder:
             raise ValueError('no items in item stack')
     def put(self, item): # puts atomic items in the current container
         self.item.put(item)
+    def reference(self, name):
+        "Returns the named object, looking through item stack for maps"
+        searchspace = reversed(filter(lambda x: isinstance(x, Map), self.items))
+        for m in searchspace:
+            if name in m:
+                return m[name]
+        raise ValueError('invalid name reference')
     def start_kvpair_key(self):
         '''Put a kvpair on the stack'''
         if not isinstance(self.item, Map): raise ValueError('adding kvpair to non-map')
@@ -205,6 +216,16 @@ def match_list(scanner, builder):
                 raise ValueError('failed to parse \']\' or expression in list')
     return False
 
+def match_bool(scanner, builder):
+    if scanner.match('true'):
+        builder.put(True)
+        return True
+    elif scanner.match('false'):
+        builder.put(False)
+        return True
+    else:
+        return False
+
 def expression(scanner, builder):
     text = scanner.text
     #print 'matching expr token', scanner.next_token
@@ -219,8 +240,12 @@ def expression(scanner, builder):
         return True
     elif match_list(scanner, builder):
         return True
+    elif match_bool(scanner, builder):
+        return True
+    elif scanner.match('ident'):
+        builder.put(builder.reference(text))
+        return True
     else:
-        return 'expr fail'
         return False
     
     
