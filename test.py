@@ -73,18 +73,57 @@ class Generators(unittest.TestCase):
     def testVariableIf(self):
         obj = lyanna.parse("foo = False baz = if foo then 13 else 42 end")
         self.assertEqual(obj['baz'].get(), 42)
+    def testElif(self):
+        obj = lyanna.parse('''
+        	foo = False foz = True frob = False 
+            baz = if foo then
+            	1
+            elif foz then
+            	2
+            elif frob then
+            	3
+            else 4 end
+            '''
+        )
+        self.assertEqual(obj['baz'].get(), 2)
+    def testElif2(self):
+    	obj = lyanna.parse('''
+        	foo = False foz = False frob = False 
+            baz = if foo then
+            	1
+            elif foz then
+            	2
+            elif frob then
+            	3
+            else 4 end
+            '''
+        )
+    	self.assertEqual(obj['baz'].get(), 4)
+    def testFunction(self):
+    	obj = lyanna.parse('''
+    		foo = function x do 42 end
+    		baz = foo()
+    	''')
+    	self.assertEqual(obj['baz'], 42)
+    def testFunctionArgs(self):
+    	obj = lyanna.parse('''
+    		foo = function x do x end
+    		baz = foo(42)
+    	''')
+    	self.assertEqual(obj['baz'], 42)
+    	
 
 class testMap(unittest.TestCase):
 	def testMapAsKey(self):
-		k = lyanna.Map()
+		k = lyanna.Map(None)
 		k['key'] = 'value'
-		m = lyanna.Map()
+		m = lyanna.Map(None)
 		m[k] = 'keyed by a map'
 		self.assertEqual(m[k], 'keyed by a map')
 	def testListAsKey(self):
-		l = lyanna.List()
+		l = lyanna.List(None)
 		l.put('foop')
-		m = lyanna.Map()
+		m = lyanna.Map(None)
 		m[l] = 'foobar'
 		self.assertEqual(m[l], 'foobar')
 
