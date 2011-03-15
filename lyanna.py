@@ -44,9 +44,9 @@ class Map(object):
 
     When used as keys
     '''
-    def __init__(self, parent):
+    def __init__(self, scope):
         self.d = {}
-        self.parent = parent
+        self.scope = scope
     def __len__(self):
         return len(self.d)
     def __getitem__(self, k):
@@ -62,17 +62,17 @@ class Map(object):
     def reference(self, key):
         if key in self:
             return self[key]
-        elif self.parent:
-            return self.parent.reference(key)
+        elif self.scope:
+            return self.scope.reference(key)
         else:
             raise ValueError('invalid reference key ' + str(key))
     def __contains__(self, item):
         return hashable_key(item) in self.d
 
 class List(object):
-    def __init__(self, parent):
+    def __init__(self, scope):
         self.l = []
-        self.parent = parent
+        self.scope = scope
     def __len__(self):
         return len(self.l)
     def __getitem__(self, k):
@@ -85,7 +85,7 @@ class List(object):
     def put(self, v):
         self.l.append(v)
     def reference(self, item):
-        return self.parent.reference
+        return self.scope.reference(item)
 
 class NameReference(object):
     '''
