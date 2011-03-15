@@ -245,25 +245,25 @@ class Builder:
         if not self.item.has_key:
             raise ValueError('trying to start value without a key')
     def start_function(self):
-        self.items.append(Function(self.top_permanent_item))
+        self.items.append(Function(self.top_scope))
     def start_map(self): # makes a new map be the current item
-        self.items.append(Map(self.top_permanent_item))
+        self.items.append(Map(self.top_scope))
     def start_list(self):
-        self.items.append(List(self.top_permanent_item))
+        self.items.append(List(self.top_scope))
     def start_if(self):
         self.items.append(IfGenerator())
     def start_nameref(self):
-        self.items.append(NameReference(self.top_permanent_item))
+        self.items.append(NameReference(self.top_scope))
     def finish_item(self):
         it = self.items.pop()
         self.item.put(it)
     @property
-    def top_permanent_item(self):
-        "topmost stack item that will actually stay in the finished data structure"
+    def top_scope(self):
+        '''topmost item that can look up names'''
         for item in reversed(self.items):
             if isinstance(item, (Map, List)):
                 return item
-        raise ValueError('oh crap, no permanent items in builder stack???!?')
+        raise ValueError('oh crap, no scope items in builder stack???!?')
     
     
 ##########################################
