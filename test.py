@@ -1,5 +1,6 @@
 import unittest
 import lyanna
+from model import *
 
 class testParse(unittest.TestCase):
 	def testParseEmpty(self):
