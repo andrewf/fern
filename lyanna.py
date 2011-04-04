@@ -24,6 +24,8 @@ lexicon = Lexicon([
     (Str('elif'),    TEXT),
     (Str('function'),TEXT),
     (Str('do'),      TEXT),
+    (Str('for'),     TEXT),
+    (Str('in'),      TEXT),
     (Any(' \n\t'),   IGNORE),
     (number,         'number'),
     (string,         'string'),
@@ -87,9 +89,14 @@ class Builder:
         self.items.append(IfGenerator())
     def start_nameref(self):
         self.items.append(NameReference(self.top_scope))
+    def start_forinloop(self):
+        self.items.append(ForInLoop(self.top_scope))
     def finish_item(self):
         it = self.items.pop()
-        self.item.put(it)
+        if isinstance(it, ForInLoop):   # if it needs to become an ItemStream
+            self.item.put(it.flatten())
+        else:
+            self.item.put(it)
     @property
     def top_scope(self):
         '''topmost item that can look up names'''
@@ -211,6 +218,30 @@ def match_function(scanner, builder):
     builder.finish_item()
     return True
 
+def match_forin(scanner, builder):
+    if not scanner.match('for'):
+        return False
+    builder.start_forinloop()
+    # get loop variable
+    text = scanner.text
+    if scanner.match('ident'):
+        builder.put(text)
+    else:
+        raise ValueError('expected expression after \'for\'')
+    # rest of the loop
+    if not scanner.match('in'):
+        raise ValueError('expected \'in\' after loop variable')
+    if not expression(scanner, builder):
+        raise ValueError('expected expression after \'in\'')
+    if not scanner.match('do'):
+        raise ValueError('expected \'do\' after loop expression')
+    if not expression(scanner, builder):
+        raise ValueError('expected expression after \'do\' in loop')
+    if not scanner.match('end'):
+        raise ValueError('expected \'end\' after loop expression')
+    builder.finish_item()
+    return True
+
 def match_nameref(scanner, builder):
     def match_paramlist():
         # open-close parens, with optional expressions
@@ -275,6 +306,8 @@ def expression(scanner, builder):
     elif match_function(scanner, builder):
         return True
     elif match_nameref(scanner, builder):
+        return True
+    elif match_forin(scanner, builder):
         return True
     else:
         return False

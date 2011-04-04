@@ -144,6 +144,17 @@ class Generators(unittest.TestCase):
     	self.assertEqual(fuzz[3],3)
     	self.assertEqual(fuzz[4],5)
     	
+class ForInLoop(unittest.TestCase):
+	def testForInList(self):
+		obj = lyanna.parse('''
+			foo = [1 for i in [2 3 4] do i end]
+		''')
+		foo = obj['foo']
+		self.assertEqual(len(foo), 4)
+		self.assertEqual(foo[0], 1)
+		self.assertEqual(foo[1], 2)
+		self.assertEqual(foo[2], 3)
+		self.assertEqual(foo[3], 4)
 
 class testMap(unittest.TestCase):
 	def testMapAsKey(self):
