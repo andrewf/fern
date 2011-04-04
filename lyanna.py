@@ -11,8 +11,8 @@ lexicon = Lexicon([
     (Str('{'),       'map_start'),
     (Str('['),       'list_start'),
     (Str(']'),       'list_end'),
-    (Str('('),       'param_start'),
-    (Str(')'),       'param_end'),
+    (Str('('),       TEXT),
+    (Str(')'),       TEXT),
     (Str('='),       'assign'),
     (Str('@'),       'at_sign'),
     (Str('True'),    'true'),
@@ -203,13 +203,15 @@ def match_if(scanner, builder):
 def match_function(scanner, builder):
     if not scanner.match('function'):
         return False
+    if not scanner.match('('):
+        raise ValueError('expected \'(\' after \'function\'')
     builder.start_function()
     while True:
         text = scanner.text
         if not scanner.match('ident'): break
         builder.put(text)
-    if not scanner.match('do'):
-        raise ValueError('expected \'do\' after parameters')
+    if not scanner.match(')'):
+        raise ValueError('expected \')\' after parameters')
     builder.item.end_params()
     if not expression(scanner, builder):
         raise ValueError('expected expression after \'do\'')
@@ -245,12 +247,12 @@ def match_forin(scanner, builder):
 def match_nameref(scanner, builder):
     def match_paramlist():
         # open-close parens, with optional expressions
-        if not scanner.match('param_start'):
+        if not scanner.match('('):
             return False
         builder.item.start_params()
         while True:
             if not expression(scanner, builder): break
-        if not scanner.match('param_end'):
+        if not scanner.match(')'):
             raise ValueError('expecting \')\' to end param list')
         return True
     text = scanner.text

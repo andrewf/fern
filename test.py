@@ -102,19 +102,19 @@ class Generators(unittest.TestCase):
     	self.assertEqual(obj['baz'].get(), 4)
     def testFunction(self):
     	obj = lyanna.parse('''
-    		foo = function x do 42 end
+    		foo = function(x) 42 end
     		baz = foo()
     	''')
     	self.assertEqual(obj['baz'], 42)
     def testFunctionArg(self):
     	obj = lyanna.parse('''
-    		foo = function x do x end
+    		foo = function(x) x end
     		baz = foo(42)
     	''')
     	self.assertEqual(obj['baz'], 42)
     def testFunctionMap(self):
     	obj = lyanna.parse('''
-    		foo = function x do
+    		foo = function(x)
     			{ bar = x }
     		end
     		baz = foo(42)
@@ -122,7 +122,7 @@ class Generators(unittest.TestCase):
     	self.assertEqual(obj['baz']['bar'], 42)
     def testFunctionMultipleArgs(self):
     	obj = lyanna.parse('''
-    		foo = function x y do
+    		foo = function(x y)
     			{ bar = x baz = y}
     		end
     		fuzz = foo(13 17)
@@ -132,7 +132,7 @@ class Generators(unittest.TestCase):
     	self.assertEqual(fuzz['baz'], 17)
     def testFunctionList(self):
     	obj = lyanna.parse('''
-    		foo = function x y z do
+    		foo = function(x y z)
     			[ z y x y z] end
     		fuzz = foo( 1 3 5)
     	''')
