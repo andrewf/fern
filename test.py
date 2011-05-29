@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import unittest
 import lyanna
 from model import *
@@ -19,7 +21,10 @@ class testParse(unittest.TestCase):
 		self.assertEqual(obj['one'], 1)
 		self.assertEqual(obj['two'], 'two')
 	def testParseAtSign(self):
-		obj = lyanna.parse("@'key'   = 'value'")
+		obj = lyanna.parse("@'key' = 'value'")
+		self.assertEqual(obj['key'], 'value')
+	def testAtSign2(self):
+		obj = lyanna.parse("k = 'key' @k = 'value'")
 		self.assertEqual(obj['key'], 'value')
 	def testParseMap(self):
 		obj = lyanna.parse("foo = {key = 'value'}")
@@ -106,6 +111,13 @@ class Generators(unittest.TestCase):
     		baz = foo()
     	''')
     	self.assertEqual(obj['baz'], 42)
+#    def testFunctionIf(self):
+#    	obj = lyanna.parse('''
+#    		foo = function(x) [x] end
+#    		baz = if True then foo(3) else foo(4) end
+#    	''')
+#    	baz = obj['baz']
+#    	self.assertEqual(baz.get(), 3)
     def testFunctionArg(self):
     	obj = lyanna.parse('''
     		foo = function(x) x end
@@ -155,6 +167,16 @@ class ForInLoop(unittest.TestCase):
 		self.assertEqual(foo[1], 2)
 		self.assertEqual(foo[2], 3)
 		self.assertEqual(foo[3], 4)
+#	def testForInList2(self):
+#		obj = lyanna.parse('''
+#			f = function(x) [x] end
+#			foo = [ [1] for i in [2 3 4] do f(i) end]
+#		''')
+#		foo = obj['foo']
+#		for i in range(4):
+#			it = foo[i]
+#			self.assertTrue(isinstance(it, lyanna.List))
+#			self.assertEqual(it[0], i+1)
 
 class testMap(unittest.TestCase):
 	def testMapAsKey(self):

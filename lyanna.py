@@ -72,6 +72,13 @@ class Builder:
             if name in m:
                 return m[name]
         raise ValueError('invalid name reference')
+    @property
+    def top_scope(self):
+        '''topmost item that can look up names'''
+        for item in reversed(self.items):
+            if isinstance(item, Scope):
+                return item
+        raise ValueError('oh crap, no scope items in builder stack???!?')
     def start_kvpair_key(self):
         '''Put a kvpair on the stack'''
         if not isinstance(self.item, Map): raise ValueError('adding kvpair to non-map')
@@ -97,13 +104,6 @@ class Builder:
             self.item.put(it.flatten())
         else:
             self.item.put(it)
-    @property
-    def top_scope(self):
-        '''topmost item that can look up names'''
-        for item in reversed(self.items):
-            if isinstance(item, Scope):
-                return item
-        raise ValueError('oh crap, no scope items in builder stack???!?')
     
     
 ##########################################

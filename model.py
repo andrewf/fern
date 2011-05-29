@@ -12,10 +12,14 @@ class IdKey(tuple):
         return tuple.__new__(cls, (obj,))
 
 def hashable_key(obj):
-    'Makes sure the obj is hashable, wrapping in IdKey if needed'
+    '''Makes sure the obj is hashable, wrapping in IdKey if needed
+    
+    also deref's NameReferences'''
     # actually, it's not that picky. Just makes sure to wrap Map and List
     if isinstance(obj, (Map, List)):
         return IdKey(obj)
+    if isinstance(obj, NameReference):
+        return obj.get()
     else:
         return obj
 
@@ -166,6 +170,11 @@ class IfGenerator(object):
             return bool(item.get())
         return bool(item)
 
+def get_if_nameref(item):
+    if isinstance(item, NameReference):
+        return item.get()
+    return item
+
 class Function(object):
     def __init__(self, scope):
         self.expecting = 'params' # params | value | None
@@ -183,7 +192,7 @@ class Function(object):
     def end_params(self):
         self.expecting = 'value'
     def call(self, *params):
-        namedparams = dict(zip(self.params, params))
+        namedparams = dict(zip(self.params, map(get_if_nameref, params)))
         invocation_scope = Map(self.scope)
         invocation_scope.d = namedparams
         result = copy(self.value)
