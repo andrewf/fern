@@ -10,6 +10,8 @@ class BasicNameref(unittest.TestCase):
         self.assertEqual(self.nr.name, 'name')
 
 class TestLookup(unittest.TestCase):
+    '''Besides just NameRef, this is a test of all name-lookup
+    facilities in Lyanna. Kinda SRP-violating...'''
     def setUp(self):
         '''set up a simple but comprehensive test environment
         for looking up names
@@ -45,4 +47,8 @@ class TestLookup(unittest.TestCase):
     def testRefThroughList(self):
         self.m['var'] = 13
         self.assertEqual(self.two[0].get(), 13)
+    def testInvalidKeyReturnsUndefined(self):
+        invalid = NameRef('nope')
+        self.three['bar'] = invalid
+        self.assertEqual(invalid.get(), lyanna.primitives.Undefined)
         
