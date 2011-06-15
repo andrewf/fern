@@ -21,4 +21,12 @@ class Map(Node):
         return self.value[k]
     def __setitem__(self, k, v):
         self.put(KVPair(self, k, v))
-        
+
+class List(Node):
+    def __init__(self, parent):
+        self.children = []
+    def put(self, item):
+        self.children.append(item)
+    def __getitem__(self, index):
+        return self.children[index]
+
