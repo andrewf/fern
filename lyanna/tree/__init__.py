@@ -1,14 +1,11 @@
-from lyanna import simple
-
-class Error(Exception):
-    '''Semantic errors, regardless of syntax'''
-
+from lyanna import simple, errors
 
 class Node(object):
     pass
 
 class KVPair(Node):
-    def __init__(self, key, value):
+    def __init__(self, parent, key, value):
+        self.parent = parent
         self.key = key
         self.value = value
 
@@ -22,4 +19,6 @@ class Map(Node):
         self.value[kvpair.key] = kvpair.value
     def __getitem__(self, k):
         return self.value[k]
+    def __setitem__(self, k, v):
+        self.put(KVPair(self, k, v))
         
