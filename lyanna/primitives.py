@@ -6,10 +6,12 @@ selected instances are exported through __all__
 '''
 
 class NothingType(object):
-    pass
+    def __str__(self):
+        return "Nothing"
 
 class UndefinedType(object):
-    pass
+    def __str__(self):
+        return "Undefined"
 
 Nothing = NothingType()
 Undefined = UndefinedType()

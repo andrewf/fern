@@ -3,7 +3,7 @@ import lyanna.tree.list
 
 class TestList(unittest.TestCase):
     def setUp(self):
-        self.li = lyanna.tree.list.List(None)
+        self.li = lyanna.tree.list.List()
     def testPutAndAccess(self):
         self.li.put(42)
         self.li.put('umm')
