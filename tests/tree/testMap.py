@@ -1,7 +1,8 @@
 import unittest
 
 import lyanna
-from lyanna.tree import Node, Map, KVPair
+from lyanna.tree.node import Node
+from lyanna.tree.map import Map, KVPair
 
 class TestKVPair(unittest.TestCase):
     "Not much to see, it's basically just a pair"
