@@ -25,3 +25,5 @@ class Map(Node):
         self.put(KVPair(k, v))
     def reference_impl(self, key):
         return self.value[key]
+    def __contains__(self, key):
+        return key in self.value

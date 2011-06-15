@@ -34,4 +34,10 @@ class TestMap(unittest.TestCase):
         self.m['key'] = 45
         self.m.put(KVPair('key', 13))
         self.assertEqual(self.m['key'], 13)
+    def testMissingKeyisUndefined(self):
+        self.assertEqual(self.m['I do not exist'], lyanna.primitives.Undefined)
+    def testUndefinedValueDeletesKey(self):
+        self.m['foo'] = 17
+        self.m['foo'] = lyanna.primitives.Undefined
+        self.failIf('foo' in self.m)
 
