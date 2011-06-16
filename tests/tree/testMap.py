@@ -40,4 +40,7 @@ class TestMap(unittest.TestCase):
         self.m['foo'] = 17
         self.m['foo'] = lyanna.primitives.Undefined
         self.failIf('foo' in self.m)
+    #def testGetKeyVsGetItem(self):
+        # set up a child map
+        
 

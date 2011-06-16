@@ -33,22 +33,22 @@ class TestLookup(unittest.TestCase):
         self.m['two'] = self.two
         self.m['three'] = self.three
     def testDirectRef(self):
-        self.assertEqual(self.one.get(), 42)
+        self.assertEqual(self.one.eval(), 42)
     def testRefThroughMap(self):
-        self.assertEqual(self.three['foo'].get(), 42)
+        self.assertEqual(self.three['foo'].eval(), 42)
     def testRefThroughList(self):
-        self.assertEqual(self.two[0].get(), 42)
+        self.assertEqual(self.two[0].eval(), 42)
     def testDirectRefMutated(self):
         self.m['var'] = 13
-        self.assertEqual(self.one.get(), 13)
+        self.assertEqual(self.one.eval(), 13)
     def testRefThroughMap(self):
         self.m['var'] = 13
-        self.assertEqual(self.three['foo'].get(), 13)
+        self.assertEqual(self.three['foo'].eval(), 13)
     def testRefThroughList(self):
         self.m['var'] = 13
-        self.assertEqual(self.two[0].get(), 13)
+        self.assertEqual(self.two[0].eval(), 13)
     def testInvalidKeyReturnsUndefined(self):
         invalid = NameRef('nope')
         self.three['bar'] = invalid
-        self.assertEqual(invalid.get(), lyanna.primitives.Undefined)
+        self.assertEqual(invalid.eval(), lyanna.primitives.Undefined)
         
