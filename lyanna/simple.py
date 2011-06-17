@@ -31,3 +31,7 @@ class TreeNode(object):
     '''
     def __init__(self, type):
         self.type = type
+
+def is_simple(item):
+    return (primitives.is_primitive(item) or
+            isinstance(item, (Map, List, AbstractCall, TreeNode)))

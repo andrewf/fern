@@ -39,11 +39,11 @@ class TestLookup(unittest.TestCase):
     def testRefThroughList(self):
         self.assertEqual(self.two[0].eval(), 42)
     def testDirectRefMutated(self):
-        self.m['var'] = 13
+        self.m['var'] = 13 
         self.assertEqual(self.one.eval(), 13)
     def testRefThroughMap(self):
         self.m['var'] = 13
-        self.assertEqual(self.three['foo'].eval(), 13)
+        self.assertEqual(self.three['foo'], 13)
     def testRefThroughList(self):
         self.m['var'] = 13
         self.assertEqual(self.two[0].eval(), 13)

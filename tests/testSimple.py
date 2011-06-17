@@ -41,3 +41,20 @@ class TestTreeNode(unittest.TestCase):
         self.t = simple.TreeNode('node')
     def testType(self):
         self.t.type = 'node'
+
+class TestIsSimple(unittest.TestCase):
+    def testMapIsSimple(self):
+        self.assertTrue(simple.is_simple(simple.Map()))
+    def testListIsSimple(self):
+        self.assertTrue(simple.is_simple(simple.List()))
+    def testAbstractCallIsSimple(self):
+        self.assertTrue(simple.is_simple(simple.AbstractCall('f')))
+    def testTreeNodeIsSimple(self):
+        self.assertTrue(simple.is_simple(simple.TreeNode('x')))
+    def testPrimitivesAreSimple(self):
+        self.assertTrue(simple.is_simple(primitives.Undefined))
+        self.assertTrue(simple.is_simple(primitives.Nothing))
+        self.assertTrue(simple.is_simple(True))
+        self.assertTrue(simple.is_simple(17))
+        self.assertTrue(simple.is_simple('iz in ur string'))
+

@@ -16,6 +16,9 @@ class UndefinedType(object):
 Nothing = NothingType()
 Undefined = UndefinedType()
 
+def is_primitive(item):
+    return isinstance(item, (NothingType, UndefinedType, bool, int, basestring))
+
 __all__ = ['Nothing', 'Undefined']
 
 
