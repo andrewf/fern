@@ -2,7 +2,7 @@
 Exception classes to be used throughout Lyanna
 '''
 
-class Error(Exception):
+class Error(BaseException):
     '''Basic Lyanna Error'''
 
 class SemanticError(Error):

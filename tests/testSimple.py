@@ -1,5 +1,9 @@
 import unittest
-from lyanna import simple, primitives
+from lyanna import simple, primitives, errors
+import lyanna
+
+class NonSimple(object):
+    'just for testing purposes'
 
 class TestMap(unittest.TestCase):
     def setUp(self):
@@ -19,6 +23,14 @@ class TestMap(unittest.TestCase):
         self.m['foo'] = 17
         self.m['foo'] = primitives.Undefined
         self.failIf('foo' in self.m)
+    def testNonPrimitiveKey(self):
+        self.assertRaises(
+            lyanna.errors.TypeError,
+            self.m.__setitem__, NonSimple, 'random value')
+    def testNonSimpleValue(self):
+        self.assertRaises(
+            lyanna.errors.TypeError,
+            self.m.__setitem__, 'random key', NonSimple)
         
 class TestList(unittest.TestCase):
     def setUp(self):

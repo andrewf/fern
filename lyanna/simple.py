@@ -1,4 +1,6 @@
 from lyanna import primitives
+#from lyanna import errors
+import lyanna
 
 class Map(dict):
     def __getitem__(self, key):
@@ -7,6 +9,10 @@ class Map(dict):
         except KeyError:
             return primitives.Undefined
     def __setitem__(self, key, value):
+        if not primitives.is_primitive(key):
+            raise lyanna.errors.TypeError('Only primitive keys in maps')
+        if not is_simple(value):
+            raise lyanna.errors.TypeError('Only simple values in maps')
         if value is primitives.Undefined:
             if key in self:
                 del self[key]
