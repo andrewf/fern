@@ -1,21 +1,18 @@
 from lyanna.tree.node import Node
 from lyanna import simple
-from lyanna.tree.tools import eval_if_possible
-
-class KVPair(Node):
-    def __init__(self, key, value):
-        Node.__init__(self)
-        self.key = key
-        self.value = value
-        self.reparent(self.key)
-        self.reparent(self.value)
-        
+from lyanna.tree.tools import eval_if_possible, KVPair        
 
 class Map(Node):
     def __init__(self):
         Node.__init__(self)
         self.children = []
         self.value = None
+    def reparent(self, item):
+        if isinstance(item, KVPair):
+            Node.reparent(self, item.key)
+            Node.reparent(self, item.value)
+        else:
+            Node.reparent(item)
     def put(self, kvpair):
         self.reparent(kvpair)
         self.children.append(kvpair)
