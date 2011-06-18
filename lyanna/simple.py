@@ -20,7 +20,10 @@ class Map(dict):
             dict.__setitem__(self, key, value)
 
 class List(list):
-    pass
+    def append(self, item):
+        if not is_simple(item):
+            raise lyanna.errors.TypeError('Only simple values in lists')
+        list.append(self, item)
 
 class AbstractCall(object):
     '''A call to a function that doesn't exist, for semantic purposes'''

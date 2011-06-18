@@ -38,6 +38,10 @@ class TestList(unittest.TestCase):
     def testAppend(self):
         self.l.append(42)
         self.assertEqual(self.l[0], 42)
+    def testNonSimpleValue(self):
+        self.assertRaises(
+            lyanna.errors.TypeError,
+            self.l.append, NonSimple)
 
 class TestFunctionCall(unittest.TestCase):
     def setUp(self):
