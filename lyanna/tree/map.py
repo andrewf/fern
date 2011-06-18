@@ -6,13 +6,12 @@ class Map(Node):
     def __init__(self):
         Node.__init__(self)
         self.children = []
-        self.value = None
     def reparent(self, item):
         if isinstance(item, KVPair):
             Node.reparent(self, item.key)
             Node.reparent(self, item.value)
         else:
-            Node.reparent(item)
+            Node.reparent(self, item)
     def put(self, kvpair):
         self.reparent(kvpair)
         self.children.append(kvpair)
@@ -28,19 +27,8 @@ class Map(Node):
     def __contains__(self, key):
         self.refresh()
         return key in self.value
-    def eval(self):
-        self.refresh()
-        return self.value
-    @property
-    def modified(self):
-        return self.value is None
-    def invalidate(self):
-        self.value = None
-    def refresh(self):
-        'Make sure the fully evaluated version of self is up-to-date'
-        if self.modified:
-            # rebuild self.value:
-            self.value = simple.Map()
-            for pair in self.children:
-                self.value[eval_if_possible(pair.key)] = eval_if_possible(pair.value)
+    def refresh_impl(self):
+        self.value = simple.Map()
+        for pair in self.children:
+            self.value[eval_if_possible(pair.key)] = eval_if_possible(pair.value)
             
