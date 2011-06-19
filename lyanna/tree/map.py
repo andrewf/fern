@@ -1,6 +1,7 @@
 from lyanna.tree.node import Node
 from lyanna import simple
-from lyanna.tree.tools import eval_if_possible, KVPair        
+from lyanna.tree.tools import eval_if_possible, KVPair
+from operator import attrgetter       
 
 class Map(Node):
     def __init__(self):
@@ -31,4 +32,8 @@ class Map(Node):
         self.value = simple.Map()
         for pair in self.children:
             self.value[eval_if_possible(pair.key)] = eval_if_possible(pair.value)
+    def get_children(self):
+        # all keys, then all values. yeah, I know...
+        return ( map(attrgetter('key'), self.children) +
+                 map(attrgetter('value'), self.children) )
             

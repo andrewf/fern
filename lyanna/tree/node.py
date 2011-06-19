@@ -83,4 +83,12 @@ class Node(object):
         '''
         self.refresh()
         return self.value
-
+    def visit(self, fun):
+        'Recursively call fun on self and all children'
+        for c in self.get_children():
+            if isinstance(c, Node):
+                c.visit(fun)
+        fun(self)
+    def get_children(self):
+        'Get a list of all children of the node, in no particular order'
+        return []

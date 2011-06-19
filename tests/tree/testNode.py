@@ -2,8 +2,16 @@ import unittest
 from lyanna.tree import Node
 
 class MyNode(Node):
+    def __init__(self):
+        Node.__init__(self)
+        self.children = []
     def refresh_impl(self):
         self.value = 'ahh!'
+    def put(self, it):
+        self.reparent(it)
+        self.children.append(it)
+    def get_children(self):
+        return self.children
 
 class TestNode(unittest.TestCase):
     def setUp(self):
@@ -21,3 +29,17 @@ class TestNode(unittest.TestCase):
     def testEval(self):
         self.n.invalidate()
         self.assertEqual(self.n.eval(), 'ahh!')
+    def testVisit(self):
+        self.counter = 0 # must be self for visitor to close on it
+        def visitor(n):
+            self.counter += 1
+        n2 = MyNode()
+        n2.put(MyNode())
+        n2.put(MyNode())
+        self.n.put(n2)
+        self.n.put(MyNode())
+        # there are now 5 nodes
+        self.n.visit(visitor)
+        self.assertEqual(self.counter, 5)
+        
+            

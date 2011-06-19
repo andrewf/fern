@@ -18,4 +18,5 @@ class List(Node):
         self.value = simple.List()
         for item in self.children:
             self.value.append(eval_if_possible(item))
-            
+    def get_children(self):
+        return self.children
