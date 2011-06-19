@@ -4,7 +4,7 @@ Tests interactions between caching systems of various nodes
 
 import unittest
 import lyanna
-from lyanna.tree import Map, List
+from lyanna.tree import Map, List, NameRef
 
 class NestedCaching(unittest.TestCase):
     def setUp(self):
@@ -44,3 +44,52 @@ class NestedCaching(unittest.TestCase):
         self.three.put('hey!')
         expected = {'one': 42, 'two': {'var':13}, 'three':[1, 2, 3, 'hey!']}
         self.assertEqual(self.root.eval(), expected)
+
+class DeepNesting(unittest.TestCase):
+    def setUp(self):
+        #root = {
+        #    ref = [1 1 2 3]
+        #    a = {aa = 14 ab = {foo = ref}}
+        #    b = {ba = a}
+        #}
+        self.root = Map()
+        # first toplevel item
+        self.ref = List()
+        self.ref.put(1)
+        self.ref.put(1)
+        self.ref.put(2)
+        self.ref.put(3)
+        self.root['ref'] = self.ref
+        # second
+        self.a = Map()
+        self.a['aa'] = 14
+        self.ab = Map()
+        self.ab['foo'] = NameRef('ref')
+        self.a['ab'] = self.ab
+        self.root['a'] = self.a
+        # third
+        self.b = Map()
+        self.b['ba'] = NameRef('a')
+        self.root['b'] = self.b
+        # expected simplified value
+        self.expected = {
+            'ref':[1, 1, 2, 3],
+            'a':{
+                'aa': 14,
+                'ab': {'foo': [1, 1, 2, 3]}
+            },
+            'b':{
+                'ba':{
+                    'aa': 14,
+                    'ab': {'foo': [1, 1, 2, 3]}
+                }
+            }
+        }
+    def testEvaluation(self):
+        self.assertEqual(self.expected, self.root.eval())
+    def testMutateNameRef(self):
+        self.ref.put(5)
+        self.expected['ref'].append(5)
+        self.expected['a']['ab']['foo'].append(5)
+        self.expected['b']['ba']['ab']['foo'].append(5)
+        self.assertEqual(self.expected, self.root.eval())
