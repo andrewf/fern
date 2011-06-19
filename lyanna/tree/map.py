@@ -1,6 +1,6 @@
 from lyanna.tree.node import Node
 from lyanna import simple
-from lyanna.tree.tools import eval_if_possible, KVPair
+from lyanna.tree.tools import eval_if_possible, KVPair        
 from operator import attrgetter       
 
 class Map(Node):
@@ -21,6 +21,19 @@ class Map(Node):
         self.refresh()
         return self.value[k]
     def __setitem__(self, k, v):
+        self.put(KVPair(k, v))
+    def set_key(self, k, v):
+        '''
+        Set the key by mutating existing kvpairs where possible.
+        
+        Modify the last kvpair with the key, if there is one.
+        Otherwise, add a new pair.
+        '''
+        for pair in reversed(self.children):
+            if pair.key == k:
+                pair.value = v
+                self.invalidate()
+                return
         self.put(KVPair(k, v))
     def reference_impl(self, key):
         self.refresh()

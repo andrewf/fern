@@ -33,5 +33,17 @@ class TestMap(unittest.TestCase):
         # set up a child map
         self.m['key'] = Map()
         self.assertTrue(isinstance(self.m['key'], lyanna.simple.Map))
+    def testSetKeyDoesNotAddChildren(self):
+        # we need to have a nice interface for changing keys by
+        # mutating KVPairs
+        self.m.put(KVPair('foo', 42))
+        self.m.put(KVPair('bar', 17))
+        self.m.put(KVPair('ggg', 'umm'))
+        self.assertEqual(self.m['bar'], 17)
+        self.assertEqual(len(self.m.children), 3)
+        # now the good part
+        self.m.set_key('bar', 13)
+        self.assertEqual(self.m['bar'], 13)
+        self.assertEqual(len(self.m.children), 3)
         
 

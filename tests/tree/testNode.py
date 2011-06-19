@@ -1,5 +1,6 @@
 import unittest
 from lyanna.tree import Node
+from lyanna.tree import NameRef
 
 class MyNode(Node):
     def __init__(self):
@@ -30,7 +31,7 @@ class TestNode(unittest.TestCase):
         self.n.invalidate()
         self.assertEqual(self.n.eval(), 'ahh!')
     def testVisit(self):
-        self.counter = 0 # must be self for visitor to close on it
+        self.counter = 0 # must be on self for visitor to close on it
         def visitor(n):
             self.counter += 1
         n2 = MyNode()
@@ -41,5 +42,3 @@ class TestNode(unittest.TestCase):
         # there are now 5 nodes
         self.n.visit(visitor)
         self.assertEqual(self.counter, 5)
-        
-            

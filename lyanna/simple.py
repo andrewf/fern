@@ -1,5 +1,4 @@
 from lyanna import primitives
-#from lyanna import errors
 import lyanna
 
 class Map(dict):

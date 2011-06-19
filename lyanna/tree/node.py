@@ -1,6 +1,5 @@
 from lyanna.primitives import Undefined
 
-
 class Node(object):
     def __init__(self):
         self._parent = None
@@ -46,11 +45,6 @@ class Node(object):
         Returns whether the node's value is up-to-date or needs to be refreshed
         '''
         return self.value == None
-    def children_modified(self):
-        '''
-        Check whether any of the node's children are modified.
-        '''
-        return False
     def invalidate(self):
         '''
         Tell the node it will need to refresh before telling anyone its value
@@ -59,6 +53,15 @@ class Node(object):
             self.value = None
             if self._parent:
                 self._parent.invalidate()
+        self.invalidate_namerefs()
+    def invalidate_namerefs(self):
+        '''
+        Invalidate all NameRef's that are children of this node
+        '''
+        def invalidate_if_nameref(n):
+            if isinstance(n, Node):
+                n.value = None
+        self.visit(invalidate_if_nameref)
     def refresh(self, skip=None):
         '''
         Makes sure self.value is up to date.
@@ -72,11 +75,6 @@ class Node(object):
         '''
         raise NotImplementedError(
             'Trying to call refresh on Node without refresh_impl')
-    def children_modified(self):
-        '''
-        Check whether any of the node's children are modified.
-        '''
-        return False
     def eval(self):
         '''
         Get an up-to-date version of self.value, the whole thing

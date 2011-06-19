@@ -39,9 +39,9 @@ class TestLookup(unittest.TestCase):
         self.m['var'] = 42
         self.m['one'] = self.one
         self.m['two'] = self.two
-        self.m['three'] = self.three        
+        self.m['three'] = self.three
+        self.m.refresh()        
     def testDirectRef(self):
-        self.m.refresh()
         self.assertEqual(self.one.eval(), 42)
     def testRefThroughMap(self):
         self.assertEqual(self.three['foo'], 42)
@@ -51,7 +51,8 @@ class TestLookup(unittest.TestCase):
         self.m['var'] = 13 
         self.assertEqual(self.one.eval(), 13)
     def testRefThroughMapMutated(self):
-        self.m['var'] = 13
+        self.m.set_key('var', 13)
+        self.m.refresh()
         self.assertEqual(self.three['foo'], 13)
     def testRefThroughListMutated(self):
         self.m['var'] = 13
@@ -60,4 +61,3 @@ class TestLookup(unittest.TestCase):
         invalid = NameRef('nope')
         self.three['bar'] = invalid
         self.assertEqual(invalid.eval(), lyanna.primitives.Undefined)
-        
