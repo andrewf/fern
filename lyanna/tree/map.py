@@ -1,6 +1,6 @@
 from lyanna.tree.node import Node
 from lyanna import simple
-from lyanna.tree.tools import eval_if_possible, KVPair        
+from lyanna.tree.tools import simplify, KVPair        
 from operator import attrgetter       
 
 class Map(Node):
@@ -44,7 +44,7 @@ class Map(Node):
     def refresh_impl(self):
         self.value = simple.Map()
         for pair in self.children:
-            self.value[eval_if_possible(pair.key)] = eval_if_possible(pair.value)
+            self.value[simplify(pair.key)] = simplify(pair.value)
     def get_children(self):
         # all keys, then all values. yeah, I know...
         return ( map(attrgetter('key'), self.children) +

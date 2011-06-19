@@ -1,6 +1,6 @@
 from node import Node
 from lyanna import simple
-from lyanna.tree.tools import eval_if_possible
+from lyanna.tree.tools import simplify
 
 class List(Node):
     def __init__(self):
@@ -17,6 +17,6 @@ class List(Node):
     def refresh_impl(self):
         self.value = simple.List()
         for item in self.children:
-            self.value.append(eval_if_possible(item))
+            self.value.append(simplify(item))
     def get_children(self):
         return self.children
