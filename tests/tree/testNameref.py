@@ -9,6 +9,14 @@ class BasicNameref(unittest.TestCase):
     def testNameMatches(self):
         self.assertEqual(self.nr.name, 'name')
 
+class SimpleLookup(unittest.TestCase):
+    def testSimple(self):
+        m = lyanna.tree.Map()
+        m['var'] = 42
+        m['ref'] = NameRef('var')
+        m.refresh()
+        self.assertEqual(m['ref'], 42)
+
 class TestLookup(unittest.TestCase):
     '''Besides just NameRef, this is a test of all name-lookup
     facilities in Lyanna. Kinda SRP-violating...'''
@@ -31,22 +39,23 @@ class TestLookup(unittest.TestCase):
         self.m['var'] = 42
         self.m['one'] = self.one
         self.m['two'] = self.two
-        self.m['three'] = self.three
+        self.m['three'] = self.three        
     def testDirectRef(self):
+        self.m.refresh()
         self.assertEqual(self.one.eval(), 42)
     def testRefThroughMap(self):
-        self.assertEqual(self.three['foo'].eval(), 42)
+        self.assertEqual(self.three['foo'], 42)
     def testRefThroughList(self):
-        self.assertEqual(self.two[0].eval(), 42)
+        self.assertEqual(self.two[0], 42)
     def testDirectRefMutated(self):
         self.m['var'] = 13 
         self.assertEqual(self.one.eval(), 13)
-    def testRefThroughMap(self):
+    def testRefThroughMapMutated(self):
         self.m['var'] = 13
         self.assertEqual(self.three['foo'], 13)
-    def testRefThroughList(self):
+    def testRefThroughListMutated(self):
         self.m['var'] = 13
-        self.assertEqual(self.two[0].eval(), 13)
+        self.assertEqual(self.two[0], 13)
     def testInvalidKeyReturnsUndefined(self):
         invalid = NameRef('nope')
         self.three['bar'] = invalid

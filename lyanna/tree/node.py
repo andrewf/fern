@@ -45,7 +45,7 @@ class Node(object):
         '''
         Returns whether the node's value is up-to-date or needs to be refreshed
         '''
-        return self.value == None or self.children_modified()
+        return self.value == None
     def children_modified(self):
         '''
         Check whether any of the node's children are modified.
@@ -55,7 +55,10 @@ class Node(object):
         '''
         Tell the node it will need to refresh before telling anyone its value
         '''
-        self.value = None
+        if self.value is not None: # prevent needless recursion
+            self.value = None
+            if self._parent:
+                self._parent.invalidate()
     def refresh(self, skip=None):
         '''
         Makes sure self.value is up to date.

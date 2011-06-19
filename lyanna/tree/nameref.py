@@ -12,4 +12,7 @@ class NameRef(Node):
         if self.parent is not None:
             return self.parent.reference(self.name)
         return Undefined
-            
+#    def refresh_impl(self):
+#        if self.parent is not None:
+#            return self.parent.reference(self.name)
+#        return Undefined

@@ -13,7 +13,7 @@ class List(Node):
         self.invalidate()
     def __getitem__(self, index):
         self.refresh()
-        return self.children[index]
+        return self.value[index]
     def refresh_impl(self):
         self.value = simple.List()
         for item in self.children:
