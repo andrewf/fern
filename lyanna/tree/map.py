@@ -7,6 +7,7 @@ class Map(Node):
     def __init__(self):
         Node.__init__(self)
         self.children = []
+        self.namebearing = True
     def reparent(self, item):
         if isinstance(item, KVPair):
             Node.reparent(self, item.key)

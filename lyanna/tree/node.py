@@ -4,6 +4,7 @@ class Node(object):
     def __init__(self):
         self._parent = None
         self.value = None
+        self.namebearing = False
     def reference(self, key):
         '''
         Looks up a name/key reference in either this scope
@@ -53,7 +54,8 @@ class Node(object):
             self.value = None
             if self._parent:
                 self._parent.invalidate()
-        self.invalidate_namerefs()
+        if self.namebearing:
+            self.invalidate_namerefs()
     def invalidate_namerefs(self):
         '''
         Invalidate all NameRef's that are children of this node
