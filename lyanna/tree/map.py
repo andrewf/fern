@@ -48,7 +48,5 @@ class Map(Node):
         for pair in self.children:
             self.value[simplify(pair.key)] = simplify(pair.value)
     def get_children(self):
-        # all keys, then all values. yeah, I know...
-        return ( map(attrgetter('key'), self.children) +
-                 map(attrgetter('value'), self.children) )
+        return self.children
             
