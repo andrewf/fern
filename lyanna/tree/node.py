@@ -12,20 +12,22 @@ class Node(object):
         
         Returns primitives.Undefined if name is not found
         '''
-        item = self.reference_impl(key)
-        if item is Undefined: # we can't find item
-            if self.parent is not None:
-                return self.parent.reference(key)
-            else: # with no parent, we're stuck
-                return Undefined
-        else:
-            return item
+        if self.namebearing:
+            item = self.reference_impl(key)
+            if item is not Undefined: # we found the item
+                return item
+        # try the parent
+        if self.parent is not None:
+            return self.parent.reference(key)
+        else: # with no parent, we're stuck
+            return Undefined
     def reference_impl(self, key):
         '''
         Overridden by any class that can actually provide names. If name is
         not found return Undefined. Do not recur!
         '''
-        return Undefined
+        return NotImplementedError(
+            'Probably calling reference_impl on non-namebearing Node')
     # easy parent access
     def get_parent(self):
         return self._parent
