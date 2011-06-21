@@ -1,6 +1,7 @@
 from lyanna.tree.node import Node
 from lyanna import simple
-from lyanna.tree.tools import simplify, KVPair        
+from lyanna.tree.tools import simplify
+from lyanna.tree.kvpair import KVPair       
 from operator import attrgetter       
 
 class Map(Node):
