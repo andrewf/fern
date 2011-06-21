@@ -40,18 +40,26 @@ class Node(object):
         if isinstance(new_child, Node):
             new_child.parent = self
     # caching
-    @property
-    def modified(self):
+    def get_modified(self):
         '''
-        Returns whether the node's value is up-to-date or needs to be refreshed
+        Whether the node is up-to-date or needs to be refreshed
         '''
-        return self.value == None
+        return self.value == None 
+    def set_modified(self, b):
+        '''
+        Invalidate just this node.
+        '''
+        if b:
+            self.value = None
+        else:
+            raise RuntimeError('you don\'t get to set node.modified to false')
+    modified = property(get_modified, set_modified)
     def invalidate(self):
         '''
         Tell the node it will need to refresh before telling anyone its value
         '''
-        if self.value is not None: # prevent needless recursion
-            self.value = None
+        if not self.modified: # prevent needless recursion
+            self.modified = True
             if self._parent:
                 self._parent.invalidate()
         if self.namebearing:
@@ -62,7 +70,7 @@ class Node(object):
         '''
         def invalidate_if_nameref(n):
             if isinstance(n, Node):
-                n.value = None
+                n.modified = True
         self.visit(invalidate_if_nameref)
     def refresh(self, skip=None):
         '''
