@@ -32,3 +32,18 @@ class TestKVPair(unittest.TestCase):
         result = p.result()
         self.assertEqual(result.key, 'foo')
         self.assertEqual(result.value, 42)
+
+class TestLiterals(unittest.TestCase):
+    '''Parsing of literal objects'''
+    def testParseEmptyList(self):
+        p=Parser("[]")
+        self.assertTrue(p.list())
+        self.assertEqual([], p.result().eval())
+    def testParseList(self):
+        p=Parser("[1 2 'foo' ['hey' 5] 4]")
+        self.assertTrue(p.list())
+        result = p.result()
+        self.assertTrue(isinstance(result, lyanna.tree.List))
+        self.assertEqual(result.eval(), [1, 2, 'foo', ['hey', 5], 4])
+        
+        

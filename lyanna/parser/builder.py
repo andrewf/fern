@@ -61,6 +61,8 @@ class ParseStack(object):
         self.stack.append(NameDeclBuilder())
     def start_map(self):
         self.stack.append(lyanna.tree.Map())
+    def start_list(self):
+        self.stack.append(lyanna.tree.List())
     def finish_item(self):
         if len(self.stack) > 1:
             it = self.stack.pop()

@@ -16,6 +16,8 @@ lexicon = Lexicon([
     (string, 'string'),
     (Str('@'), TEXT),
     (Any(' \n\t'), IGNORE),
+    (Str('['), TEXT),
+    (Str(']'), TEXT),
 ])
 
 # token types
@@ -24,6 +26,8 @@ number = 'number'
 assign = '='
 at = '@'
 string = 'string'
+list_start = '['
+list_end = ']'
 
 class MatchScanner(Scanner):
     def __init__(self, *args, **kwargs):
@@ -111,5 +115,16 @@ class Parser(object):
         elif self.tokens.match(string):
             self.stack.put(text[1:-1])
             return True
+        elif self.list():
+            return True
         else:
             return False
+    def list(self):
+        if not self.tokens.match(list_start):
+            return False
+        self.stack.start_list()
+        while self.expression(): pass
+        if not self.tokens.match(list_end):
+            raise SyntaxError('expected ] or expression in list')
+        self.stack.finish_item()
+        return True
