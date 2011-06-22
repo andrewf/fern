@@ -1,8 +1,8 @@
 import unittest
 
-import lyanna
-from lyanna.ast.node import Node
-from lyanna.ast.map import Map, KVPair
+import fern
+from fern.ast.node import Node
+from fern.ast.map import Map, KVPair
 
 class TestMap(unittest.TestCase):
     def setUp(self):
@@ -24,15 +24,15 @@ class TestMap(unittest.TestCase):
         self.m.put(KVPair('key', 13))
         self.assertEqual(self.m['key'], 13)
     def testMissingKeyisUndefined(self):
-        self.assertEqual(self.m['I do not exist'], lyanna.primitives.Undefined)
+        self.assertEqual(self.m['I do not exist'], fern.primitives.Undefined)
     def testUndefinedValueDeletesKey(self):
         self.m['foo'] = 17
-        self.m['foo'] = lyanna.primitives.Undefined
+        self.m['foo'] = fern.primitives.Undefined
         self.failIf('foo' in self.m)
     def testGetKeyVsGetItem(self):
         # set up a child map
         self.m['key'] = Map()
-        self.assertTrue(isinstance(self.m['key'], lyanna.simple.Map))
+        self.assertTrue(isinstance(self.m['key'], fern.simple.Map))
     def testSetKeyDoesNotAddChildren(self):
         # we need to have a nice interface for changing keys by
         # mutating KVPairs

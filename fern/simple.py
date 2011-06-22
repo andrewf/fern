@@ -1,5 +1,5 @@
-from lyanna import primitives
-import lyanna
+from fern import primitives
+import fern
 
 class Map(dict):
     def __getitem__(self, key):
@@ -9,9 +9,9 @@ class Map(dict):
             return primitives.Undefined
     def __setitem__(self, key, value):
         if not primitives.is_primitive(key):
-            raise lyanna.errors.TypeError('Only primitive keys in maps')
+            raise fern.errors.TypeError('Only primitive keys in maps')
         if not is_simple(value):
-            raise lyanna.errors.TypeError('Only simple values in maps')
+            raise fern.errors.TypeError('Only simple values in maps')
         if value is primitives.Undefined:
             if key in self:
                 del self[key]
@@ -21,7 +21,7 @@ class Map(dict):
 class List(list):
     def append(self, item):
         if not is_simple(item):
-            raise lyanna.errors.TypeError('Only simple values in lists')
+            raise fern.errors.TypeError('Only simple values in lists')
         list.append(self, item)
 
 class AbstractCall(object):

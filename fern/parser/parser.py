@@ -1,4 +1,4 @@
-import lyanna
+import fern
 from builder import ParseStack, Builder
 from StringIO import StringIO
 
@@ -117,7 +117,7 @@ class Parser(object):
     def nameref(self):
         text = self.tokens.text
         if self.tokens.match(ident):
-            self.stack.put(lyanna.ast.NameRef(text))
+            self.stack.put(fern.ast.NameRef(text))
             return True
         return False
     def expression(self):

@@ -1,17 +1,17 @@
 import unittest
-import lyanna
-from lyanna.ast import NameRef
+import fern
+from fern.ast import NameRef
 
 class BasicNameref(unittest.TestCase):
     '''Sans actual name lookups'''
     def setUp(self):
-        self.nr = lyanna.ast.NameRef('name')
+        self.nr = fern.ast.NameRef('name')
     def testNameMatches(self):
         self.assertEqual(self.nr.name, 'name')
 
 class SimpleLookup(unittest.TestCase):
     def testSimple(self):
-        m = lyanna.ast.Map()
+        m = fern.ast.Map()
         m['var'] = 42
         m['ref'] = NameRef('var')
         m.refresh()
@@ -33,9 +33,9 @@ class TestLookup(unittest.TestCase):
         #     three = {foo=var}
         # }
         self.one = NameRef('var')
-        self.two = lyanna.ast.List(); self.two.put(NameRef('var'))
-        self.three = lyanna.ast.Map(); self.three['foo'] = NameRef('var')
-        self.m = lyanna.ast.Map()
+        self.two = fern.ast.List(); self.two.put(NameRef('var'))
+        self.three = fern.ast.Map(); self.three['foo'] = NameRef('var')
+        self.m = fern.ast.Map()
         self.m['var'] = 42
         self.m['one'] = self.one
         self.m['two'] = self.two
@@ -60,4 +60,4 @@ class TestLookup(unittest.TestCase):
     def testInvalidKeyReturnsUndefined(self):
         invalid = NameRef('nope')
         self.three['bar'] = invalid
-        self.assertEqual(invalid.eval(), lyanna.primitives.Undefined)
+        self.assertEqual(invalid.eval(), fern.primitives.Undefined)

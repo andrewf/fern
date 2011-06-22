@@ -1,6 +1,6 @@
-import lyanna
-from lyanna.ast.kvpair import KVPair
-from lyanna.parser.errors import BuilderError
+import fern
+from fern.ast.kvpair import KVPair
+from fern.parser.errors import BuilderError
 
 class Builder(object):
     pass
@@ -60,9 +60,9 @@ class ParseStack(object):
     def start_namedecl(self):
         self.stack.append(NameDeclBuilder())
     def start_map(self):
-        self.stack.append(lyanna.ast.Map())
+        self.stack.append(fern.ast.Map())
     def start_list(self):
-        self.stack.append(lyanna.ast.List())
+        self.stack.append(fern.ast.List())
     def finish_item(self):
         if len(self.stack) > 1:
             it = self.stack.pop()

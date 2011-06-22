@@ -1,5 +1,5 @@
 from node import Node
-from lyanna.primitives import Undefined
+from fern.primitives import Undefined
 
 class NameRef(Node):
     '''

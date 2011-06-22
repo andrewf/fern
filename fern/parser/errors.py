@@ -1,6 +1,6 @@
-import lyanna
+import fern
 
-class Error(lyanna.errors.Error):
+class Error(fern.errors.Error):
     '''Parser Error'''
 
 class BuilderError(Error):

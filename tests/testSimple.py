@@ -1,6 +1,6 @@
 import unittest
-from lyanna import simple, primitives, errors
-import lyanna
+from fern import simple, primitives, errors
+import fern
 
 class NonSimple(object):
     'just for testing purposes'
@@ -25,11 +25,11 @@ class TestMap(unittest.TestCase):
         self.failIf('foo' in self.m)
     def testNonPrimitiveKey(self):
         self.assertRaises(
-            lyanna.errors.TypeError,
+            fern.errors.TypeError,
             self.m.__setitem__, NonSimple, 'random value')
     def testNonSimpleValue(self):
         self.assertRaises(
-            lyanna.errors.TypeError,
+            fern.errors.TypeError,
             self.m.__setitem__, 'random key', NonSimple)
         
 class TestList(unittest.TestCase):
@@ -40,7 +40,7 @@ class TestList(unittest.TestCase):
         self.assertEqual(self.l[0], 42)
     def testNonSimpleValue(self):
         self.assertRaises(
-            lyanna.errors.TypeError,
+            fern.errors.TypeError,
             self.l.append, NonSimple)
 
 class TestFunctionCall(unittest.TestCase):

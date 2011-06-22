@@ -1,6 +1,6 @@
 import unittest
-from lyanna.ast import Node
-from lyanna.ast import NameRef
+from fern.ast import Node
+from fern.ast import NameRef
 
 class MyNode(Node):
     def __init__(self):

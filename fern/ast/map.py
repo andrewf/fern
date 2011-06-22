@@ -1,7 +1,7 @@
-from lyanna.ast.node import Node
-from lyanna import simple
-from lyanna.ast.tools import simplify
-from lyanna.ast.kvpair import KVPair       
+from fern.ast.node import Node
+from fern import simple
+from fern.ast.tools import simplify
+from fern.ast.kvpair import KVPair       
 from operator import attrgetter       
 
 class Map(Node):

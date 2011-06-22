@@ -1,6 +1,6 @@
 from node import Node
-from lyanna import simple
-from lyanna.ast.tools import simplify
+from fern import simple
+from fern.ast.tools import simplify
 
 class List(Node):
     def __init__(self):

@@ -3,8 +3,8 @@ Tests interactions between caching systems of various nodes
 '''
 
 import unittest
-import lyanna
-from lyanna.ast import Map, List, NameRef
+import fern
+from fern.ast import Map, List, NameRef
 
 class NestedCaching(unittest.TestCase):
     def setUp(self):

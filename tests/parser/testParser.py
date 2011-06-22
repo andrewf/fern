@@ -1,6 +1,6 @@
 import unittest
-import lyanna
-from lyanna.parser.parser import Parser
+import fern
+from fern.parser.parser import Parser
 from StringIO import StringIO
 
 class Basics(unittest.TestCase):
@@ -8,7 +8,7 @@ class Basics(unittest.TestCase):
         self.p = Parser("foo= 42@'bar' = 'ggg'")
         self.fdg = self.p.parse()
     def testIsMap(self):
-        self.assertTrue(isinstance(self.fdg, lyanna.ast.Map))
+        self.assertTrue(isinstance(self.fdg, fern.ast.Map))
     def testKeys(self):
         self.assertEqual(self.fdg['foo'], 42)
         self.assertEqual(self.fdg['bar'], 'ggg')
@@ -26,7 +26,7 @@ class TestKVPair(unittest.TestCase):
         p=Parser('foo=42')
         self.assertTrue(p.kvpair())
         result = p.result
-        self.assertTrue(isinstance(result, lyanna.ast.kvpair.KVPair))
+        self.assertTrue(isinstance(result, fern.ast.kvpair.KVPair))
         self.assertEqual(result.key, 'foo')
         self.assertEqual(result.value, 42)
     def testStringToString(self):
@@ -52,7 +52,7 @@ class TestLiterals(unittest.TestCase):
         p=Parser("[1 2 'foo' ['hey' 5] 4]")
         self.assertTrue(p.list())
         result = p.result
-        self.assertTrue(isinstance(result, lyanna.ast.List))
+        self.assertTrue(isinstance(result, fern.ast.List))
         self.assertEqual(result.eval(), [1, 2, 'foo', ['hey', 5], 4])
     def testParseEmptyMap(self):
         p=Parser('{}')

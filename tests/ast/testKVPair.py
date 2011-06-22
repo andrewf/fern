@@ -1,5 +1,5 @@
 import unittest
-from lyanna.ast.kvpair import KVPair
+from fern.ast.kvpair import KVPair
 
 class TestKVPair(unittest.TestCase):
     "Not much to see, it's basically just a pair"
