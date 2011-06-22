@@ -18,6 +18,8 @@ lexicon = Lexicon([
     (Any(' \n\t'), IGNORE),
     (Str('['), TEXT),
     (Str(']'), TEXT),
+    (Str('{'), TEXT),
+    (Str('}'), TEXT),
 ])
 
 # token types
@@ -28,6 +30,8 @@ at = '@'
 string = 'string'
 list_start = '['
 list_end = ']'
+map_start = '{'
+map_end = '}'
 
 class MatchScanner(Scanner):
     def __init__(self, *args, **kwargs):
@@ -58,7 +62,8 @@ class Parser(object):
     def parse(self):
         'Parse the start/root symbol of the grammar'
         self.start()
-        return self.result()
+        return self.result
+    @property
     def result(self):
         '''Result of parsing whatever function, i.e. the top of the stack.
         
@@ -115,10 +120,19 @@ class Parser(object):
         elif self.tokens.match(string):
             self.stack.put(text[1:-1])
             return True
-        elif self.list():
+        elif self.list() or self.map():
             return True
         else:
             return False
+    def map(self):
+        if not self.tokens.match(map_start):
+            return False
+        self.stack.start_map()
+        while self.kvpair(): pass
+        if not self.tokens.match(map_end):
+            raise SyntaxError('expected } or kvpair in map')
+        self.stack.finish_item()
+        return True
     def list(self):
         if not self.tokens.match(list_start):
             return False
