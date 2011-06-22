@@ -65,6 +65,10 @@ class TestNameRef(unittest.TestCase):
         self.assertEqual(m['b'], 3)
         m.set_key('a', 5)
         self.assertEqual(m['b'], 5)
+    def testWithMaps(self):
+        p=Parser('a={bar=42} b={foo=a}')
+        m = p.parse()
+        self.assertEqual(m.eval(), {'a':{'bar':42}, 'b':{'foo':{'bar':42}}})
     # we're not gonna do @ namerefs just yet
 
 
