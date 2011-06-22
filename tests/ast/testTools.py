@@ -1,6 +1,6 @@
 import unittest
 
-from lyanna.tree import tools
+from lyanna.ast import tools
 
 class TestItemStream(unittest.TestCase):
     def setUp(self):

@@ -1,2 +1,2 @@
-from lyanna.tree.kvpair import KVPair
+from lyanna.ast.kvpair import KVPair
 from errors import BuilderError

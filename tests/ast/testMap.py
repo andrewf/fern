@@ -1,8 +1,8 @@
 import unittest
 
 import lyanna
-from lyanna.tree.node import Node
-from lyanna.tree.map import Map, KVPair
+from lyanna.ast.node import Node
+from lyanna.ast.map import Map, KVPair
 
 class TestMap(unittest.TestCase):
     def setUp(self):

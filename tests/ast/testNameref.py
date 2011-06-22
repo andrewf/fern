@@ -1,17 +1,17 @@
 import unittest
 import lyanna
-from lyanna.tree import NameRef
+from lyanna.ast import NameRef
 
 class BasicNameref(unittest.TestCase):
     '''Sans actual name lookups'''
     def setUp(self):
-        self.nr = lyanna.tree.NameRef('name')
+        self.nr = lyanna.ast.NameRef('name')
     def testNameMatches(self):
         self.assertEqual(self.nr.name, 'name')
 
 class SimpleLookup(unittest.TestCase):
     def testSimple(self):
-        m = lyanna.tree.Map()
+        m = lyanna.ast.Map()
         m['var'] = 42
         m['ref'] = NameRef('var')
         m.refresh()
@@ -33,9 +33,9 @@ class TestLookup(unittest.TestCase):
         #     three = {foo=var}
         # }
         self.one = NameRef('var')
-        self.two = lyanna.tree.List(); self.two.put(NameRef('var'))
-        self.three = lyanna.tree.Map(); self.three['foo'] = NameRef('var')
-        self.m = lyanna.tree.Map()
+        self.two = lyanna.ast.List(); self.two.put(NameRef('var'))
+        self.three = lyanna.ast.Map(); self.three['foo'] = NameRef('var')
+        self.m = lyanna.ast.Map()
         self.m['var'] = 42
         self.m['one'] = self.one
         self.m['two'] = self.two

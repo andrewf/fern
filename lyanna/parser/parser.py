@@ -117,7 +117,7 @@ class Parser(object):
     def nameref(self):
         text = self.tokens.text
         if self.tokens.match(ident):
-            self.stack.put(lyanna.tree.NameRef(text))
+            self.stack.put(lyanna.ast.NameRef(text))
             return True
         return False
     def expression(self):

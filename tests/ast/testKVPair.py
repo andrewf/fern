@@ -1,5 +1,5 @@
 import unittest
-from lyanna.tree.kvpair import KVPair
+from lyanna.ast.kvpair import KVPair
 
 class TestKVPair(unittest.TestCase):
     "Not much to see, it's basically just a pair"

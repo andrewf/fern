@@ -1,5 +1,5 @@
 import lyanna
-from lyanna.tree.kvpair import KVPair
+from lyanna.ast.kvpair import KVPair
 from lyanna.parser.errors import BuilderError
 
 class Builder(object):
@@ -60,9 +60,9 @@ class ParseStack(object):
     def start_namedecl(self):
         self.stack.append(NameDeclBuilder())
     def start_map(self):
-        self.stack.append(lyanna.tree.Map())
+        self.stack.append(lyanna.ast.Map())
     def start_list(self):
-        self.stack.append(lyanna.tree.List())
+        self.stack.append(lyanna.ast.List())
     def finish_item(self):
         if len(self.stack) > 1:
             it = self.stack.pop()

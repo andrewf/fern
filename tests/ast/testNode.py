@@ -1,6 +1,6 @@
 import unittest
-from lyanna.tree import Node
-from lyanna.tree import NameRef
+from lyanna.ast import Node
+from lyanna.ast import NameRef
 
 class MyNode(Node):
     def __init__(self):

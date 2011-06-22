@@ -1,9 +1,9 @@
 import unittest
-import lyanna.tree.list
+import lyanna.ast.list
 
 class TestList(unittest.TestCase):
     def setUp(self):
-        self.li = lyanna.tree.list.List()
+        self.li = lyanna.ast.list.List()
     def testPutAndAccess(self):
         self.li.put(42)
         self.li.put('umm')
