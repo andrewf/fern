@@ -1,8 +1,9 @@
 import unittest
 import lyanna
 from lyanna.parser.parser import Parser
+from StringIO import StringIO
 
-class StartSymbol(unittest.TestCase):
+class Basics(unittest.TestCase):
     def setUp(self):
         self.p = Parser("foo= 42@'bar' = 'ggg'")
         self.fdg = self.p.parse()
@@ -11,6 +12,14 @@ class StartSymbol(unittest.TestCase):
     def testKeys(self):
         self.assertEqual(self.fdg['foo'], 42)
         self.assertEqual(self.fdg['bar'], 'ggg')
+
+class FileAccess(unittest.TestCase):
+    def testAcceptsFileLike(self):
+        f = StringIO("foo=17 bar='ughu'")
+        p = Parser(f)
+        m = p.parse()
+        self.assertEqual(m['foo'], 17)
+        self.assertEqual(m['bar'], 'ughu')
 
 class TestKVPair(unittest.TestCase):
     def testStringKey(self):

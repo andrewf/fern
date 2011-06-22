@@ -57,7 +57,9 @@ class MatchScanner(Scanner):
 class Parser(object):
     def __init__(self, input):
         self.stack = ParseStack()
-        self.tokens = MatchScanner(lexicon, StringIO(input))
+        if isinstance(input, basestring):
+            input = StringIO(input)
+        self.tokens = MatchScanner(lexicon, input)
     # parser functions, UGH, SRP
     def parse(self):
         'Parse the start/root symbol of the grammar'
