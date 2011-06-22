@@ -53,5 +53,18 @@ class TestLiterals(unittest.TestCase):
         p=Parser("{a=42 b={foo='bar'} @'guh' =   [3 4]}")
         self.assertTrue(p.map())
         self.assertEqual({'a':42,'b':{'foo':'bar'}, 'guh':[3, 4]}, p.result.eval())
-        
-        
+
+class TestNameRef(unittest.TestCase):
+    def testAlone(self):
+        p=Parser('foo')
+        self.assertTrue(p.nameref())
+        self.assertEqual(p.result.name, 'foo')
+    def testBasic(self):
+        p=Parser('a=3 b=a')
+        m = p.parse()
+        self.assertEqual(m['b'], 3)
+        m.set_key('a', 5)
+        self.assertEqual(m['b'], 5)
+    # we're not gonna do @ namerefs just yet
+
+

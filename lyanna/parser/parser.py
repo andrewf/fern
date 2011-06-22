@@ -112,6 +112,12 @@ class Parser(object):
             raise SyntaxError('expected expression after @')
         else:
             return False
+    def nameref(self):
+        text = self.tokens.text
+        if self.tokens.match(ident):
+            self.stack.put(lyanna.tree.NameRef(text))
+            return True
+        return False
     def expression(self):
         text = self.tokens.text
         if self.tokens.match(number):
@@ -120,7 +126,7 @@ class Parser(object):
         elif self.tokens.match(string):
             self.stack.put(text[1:-1])
             return True
-        elif self.list() or self.map():
+        elif self.list() or self.map() or self.nameref():
             return True
         else:
             return False
