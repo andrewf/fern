@@ -63,6 +63,9 @@ class ParseStack(object):
         self.stack.append(fern.ast.Map())
     def start_list(self):
         self.stack.append(fern.ast.List())
+    def start_itemstream(self):
+        # careful, ItemStream is not a Node
+        self.stack.append(fern.ast.tools.ItemStream())
     def finish_item(self):
         if len(self.stack) > 1:
             it = self.stack.pop()
@@ -73,7 +76,7 @@ class ParseStack(object):
         # if there's only one item, nothing to do
     def put(self, item):
         "Insert the item in the current top item"
-        if self.top:
+        if self.top is not None: # check None in case self.top evals to False
             self.top.put(item) # top had better have a put method
         else:
             self.stack.append(item)

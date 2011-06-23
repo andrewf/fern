@@ -136,7 +136,7 @@ class Parser(object):
         if not self.tokens.match(map_start):
             return False
         self.stack.start_map()
-        while self.kvpair(): pass
+        self.kvpairs()
         if not self.tokens.match(map_end):
             raise SyntaxError('expected } or kvpair in map')
         self.stack.finish_item()
@@ -145,8 +145,20 @@ class Parser(object):
         if not self.tokens.match(list_start):
             return False
         self.stack.start_list()
-        while self.expression(): pass
+        self.items()
         if not self.tokens.match(list_end):
             raise SyntaxError('expected ] or expression in list')
         self.stack.finish_item()
         return True
+    def items(self):
+        'Puts a series of items in the current top object, does not create new stack frame'
+        while self.expression(): pass
+    def kvpairs(self):
+        "puts a series of kvpairs in current top object"
+        while self.kvpair(): pass
+    def itemstream(self):
+        '''Actually creates an ItemStream on the stack, as opposed
+        to just putting the items in whatever is already on the top'''
+        self.stack.start_itemstream()
+        self.items()
+        self.stack.finish_item()

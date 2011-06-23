@@ -80,4 +80,13 @@ class TestNameRef(unittest.TestCase):
         self.assertEqual(m.eval(), {'a':{'bar':42}, 'b':{'foo':{'bar':42}}})
     # we're not gonna do @ namerefs just yet
 
-
+class TestItemStream(unittest.TestCase):
+    def testAlone(self):
+        p = Parser('42 goop {a=3} [5 4]')
+        p.itemstream()
+        result = p.result
+        self.assertEqual(result[0], 42)
+        self.assertEqual(result[1].name, 'goop')
+        self.assertEqual(result[2].eval(), {'a':3})
+        self.assertEqual(result[3].eval(), [5, 4])
+        
