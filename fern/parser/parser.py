@@ -10,16 +10,21 @@ num = Rep1(Range('09'))
 string = Str("'") + Rep(AnyBut("'")) + Str("'")
 
 lexicon = Lexicon([
-    (identifier, 'ident'),
-    (num, 'number'),
-    (Str('='), TEXT),
-    (string, 'string'),
-    (Str('@'), TEXT),
     (Any(' \n\t'), IGNORE),
     (Str('['), TEXT),
     (Str(']'), TEXT),
     (Str('{'), TEXT),
     (Str('}'), TEXT),
+    (Str('='), TEXT),
+    (Str('@'), TEXT),
+    (Str('if'), TEXT),
+    (Str('then'), TEXT),
+    (Str('elif'), TEXT),
+    (Str('else'), TEXT),
+    (Str('end'), TEXT),
+    (identifier, 'ident'),
+    (num, 'number'),
+    (string, 'string'),
 ])
 
 # token types
@@ -46,7 +51,7 @@ class MatchScanner(Scanner):
             return False
     def expect(self, toktype, msg):
         if not self.match(toktype):
-            raise SyntaxError(msg)
+            raise SyntaxError(msg + str(self.position()))
     @property
     def text(self):
         '''
@@ -83,13 +88,7 @@ class Parser(object):
     def start(self):
         "Parses the root map"
         self.stack.start_map()
-        while True:
-            if self.tokens.next_token[0] is not None:
-                if not self.kvpair():
-                    raise SyntaxError('Expected kv-pairs in root object')
-            else:
-                break
-            
+        self.kvpairs()
     def kvpair(self):
         if not self.namedecl(): # leaves name on the stack
             return False
@@ -98,7 +97,7 @@ class Parser(object):
         self.stack.put(name)
         self.tokens.expect(assign, 'expected = after name declaration')
         if not self.expression(): # puts it on the stack
-            raise SyntaxError('expected expression after =')
+            raise SyntaxError('expected expression after =, %s' % str(self.tokens.position()))
         self.stack.finish_item()
         return True
     def namedecl(self):
@@ -128,7 +127,7 @@ class Parser(object):
         elif self.tokens.match(string):
             self.stack.put(text[1:-1])
             return True
-        elif self.list() or self.map() or self.nameref():
+        elif self.list() or self.map() or self.nameref() or self.cond_item():
             return True
         else:
             return False
@@ -150,15 +149,54 @@ class Parser(object):
             raise SyntaxError('expected ] or expression in list')
         self.stack.finish_item()
         return True
+    def cond_impl(self, item_fun):
+        "item_fun is called to parse cond values, a bound method on self"
+        # first if
+        if not self.tokens.match('if'):
+            return False
+        self.stack.start_conditional()
+        if not self.expression():
+            raise SyntaxError('expected expression after if')
+        self.tokens.expect('then', 'Expected `then` after if condition')
+        item_fun()
+        # 0-n elifs
+        while self.tokens.match('elif'):
+            if not self.expression():
+                raise SyntaxError('expected expression after elif')
+            self.tokens.expect('then', 'Expected `then` after elif condition')
+            item_fun()
+        # else
+        if self.tokens.match('else'):
+            self.stack.top.else_coming() # notify CondBuilder conditions are finished
+            item_fun()
+        # end of conditional
+        self.tokens.expect('end', 'Expected `end` after conditional(s)')
+        self.stack.finish_item()
+        return True
+    def cond_kvpairs(self):
+        "Conditional with type kvpair stream"
+        return self.cond_impl(self.kvpair_stream)
+    def cond_item(self):
+        "conditional for single item"
+        return self.cond_impl(self.expression)
     def items(self):
         'Puts a series of items in the current top object, does not create new stack frame'
         while self.expression(): pass
     def kvpairs(self):
         "puts a series of kvpairs in current top object"
-        while self.kvpair(): pass
+        while not self.tokens.match(None): # while not EOF
+            if self.kvpair():
+                continue
+            if self.cond_kvpairs():
+                continue
+            break
     def itemstream(self):
         '''Actually creates an ItemStream on the stack, as opposed
         to just putting the items in whatever is already on the top'''
         self.stack.start_itemstream()
         self.items()
+        self.stack.finish_item()
+    def kvpair_stream(self):
+        self.stack.start_itemstream()
+        self.kvpairs()
         self.stack.finish_item()

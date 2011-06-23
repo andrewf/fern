@@ -1,9 +1,10 @@
 import fern
 from fern.ast.kvpair import KVPair
 from fern.parser.errors import BuilderError
+from fern.ast.conditional import Conditional
 
 class Builder(object):
-    pass
+    "semantic class, just a marker for RTTI"
 
 class NameDeclBuilder(Builder):
     def __init__(self):
@@ -18,6 +19,25 @@ class NameDeclBuilder(Builder):
             return self.decl
         else:
             raise BuilderError('didn\'t put any objects in NameDecl')
+
+class CondBuilder(Builder):
+    def __init__(self):
+        self.conditional = Conditional()
+        self.curr_cond = None # if not None, expecting a value
+        self.expecting_else = False
+    def put(self, item):
+        if self.expecting_else:
+            self.conditional.else_val = item
+            self.expecting_else = False
+        elif self.curr_cond is None:
+            self.curr_cond = item
+        else:
+            self.conditional.put_cond(self.curr_cond, item)
+            self.curr_cond = None
+    def else_coming(self):
+        self.expecting_else = True
+    def get(self):
+        return self.conditional
 
 class KVPairBuilder(Builder):
     def __init__(self):
@@ -66,10 +86,12 @@ class ParseStack(object):
     def start_itemstream(self):
         # careful, ItemStream is not a Node
         self.stack.append(fern.ast.tools.ItemStream())
+    def start_conditional(self):
+        self.stack.append(CondBuilder())
     def finish_item(self):
         if len(self.stack) > 1:
             it = self.stack.pop()
-            if isinstance(it, KVPairBuilder):
+            if isinstance(it, Builder):
                 self.top.put(it.get())
             else:
                 self.top.put(it)

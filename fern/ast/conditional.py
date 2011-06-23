@@ -33,7 +33,11 @@ class Conditional(Node):
                 else:
                     self.value = simplify(c[1])
                 return
-        self.value = simplify(self.else_val)
+        # else cond
+        if isinstance(self.else_val, ItemStream):
+            self.value = self.else_val
+        else:
+            self.value = simplify(self.else_val)
     def get_children(self):
         return (map(itemgetter(0), self.conditions) +
                 map(itemgetter(1), self.conditions) +
