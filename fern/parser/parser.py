@@ -22,6 +22,8 @@ lexicon = Lexicon([
     (Str('elif'), TEXT),
     (Str('else'), TEXT),
     (Str('end'), TEXT),
+    (Str('true'), TEXT),
+    (Str('false'), TEXT),
     (identifier, 'ident'),
     (num, 'number'),
     (string, 'string'),
@@ -127,7 +129,11 @@ class Parser(object):
         elif self.tokens.match(string):
             self.stack.put(text[1:-1])
             return True
-        elif self.list() or self.map() or self.nameref() or self.cond_item():
+        elif (self.list() or
+              self.map() or
+              self.nameref() or
+              self.cond_item() or
+              self.bool()):
             return True
         else:
             return False
@@ -149,6 +155,14 @@ class Parser(object):
             raise SyntaxError('expected ] or expression in list')
         self.stack.finish_item()
         return True
+    def bool(self):
+        if self.tokens.match('true'):
+            self.stack.put(True)
+            return True
+        if self.tokens.match('false'):
+            self.stack.put(False)
+            return True
+        return False
     def cond_impl(self, item_fun):
         "item_fun is called to parse cond values, a bound method on self"
         # first if
