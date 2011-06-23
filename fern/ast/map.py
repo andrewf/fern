@@ -8,9 +8,9 @@ from operator import attrgetter
 class Map(Node):
     def __init__(self):
         Node.__init__(self)
-        self.children = []
+        self.children = [] # mostly kvpairs
         self.namebearing = True
-    def reparent(self, item):
+    def reparent(self, item): # should not be necessary
         if isinstance(item, KVPair):
             Node.reparent(self, item.key)
             Node.reparent(self, item.value)
@@ -23,12 +23,8 @@ class Map(Node):
                 if not isinstance(pair, KVPair):
                     raise errors.TypeError('Putting itemstream in map with non-kvpairs: %s' % str(type(pair)))
                 self.children.append(pair)
-        elif isinstance(thing, KVPair):
-            self.children.append(thing)
         elif isinstance(thing, Node):
-            # assume it's a kvpair generator
             self.children.append(thing)
-            self.reparent(thing)
         self.invalidate()
     def __getitem__(self, k):
         self.refresh()

@@ -121,7 +121,7 @@ class Parser(object):
             self.stack.put(fern.ast.NameRef(text))
             return True
         return False
-    def expression(self):
+    def item(self):
         text = self.tokens.text
         if self.tokens.match(number):
             self.stack.put(int(text))
@@ -132,11 +132,12 @@ class Parser(object):
         elif (self.list() or
               self.map() or
               self.nameref() or
-              self.cond_item() or
               self.bool()):
             return True
         else:
             return False
+    def expression(self):
+        return self.item() or self.cond_item()
     def map(self):
         if not self.tokens.match(map_start):
             return False
@@ -193,9 +194,17 @@ class Parser(object):
     def cond_item(self):
         "conditional for single item"
         return self.cond_impl(self.expression)
+    def cond_itemstream(self):
+        "Conditional for multiple items"
+        return self.cond_impl(self.itemstream)
     def items(self):
         'Puts a series of items in the current top object, does not create new stack frame'
-        while self.expression(): pass
+        while not self.tokens.match(None): # while not EOF
+            if self.item():
+                continue
+            if self.cond_itemstream():
+                continue
+            break
     def kvpairs(self):
         "puts a series of kvpairs in current top object"
         while not self.tokens.match(None): # while not EOF

@@ -28,3 +28,25 @@ class ParseConditional(unittest.TestCase):
         self.assertEqual(m.eval(), {'var':False,'var2':'f','foo':4,'bar':3})
         m.set_key('var2', False)
         self.assertEqual(m.eval(), {'var':False,'var2':False,'ggg':5})
+    def testItemsIf(self):
+        p = Parser('''
+            var = true
+            var2 = true
+            list = [
+                'first'
+                if var then
+                    1 'foo' {}
+                elif var2 then
+                    14 [] var
+                else
+                    'ack'
+                end
+                'last'
+            ]
+        ''')
+        m = p.parse()
+        self.assertEqual(m['list'], ['first', 1, 'foo', {}, 'last'])
+        m.set_key('var', False)
+        self.assertEqual(m['list'], ['first', 14, [], False, 'last'])
+        m.set_key('var2', False)
+        self.assertEqual(m['list'], ['first', 'ack', 'last'])
