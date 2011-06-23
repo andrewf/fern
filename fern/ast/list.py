@@ -24,7 +24,12 @@ class List(Node):
         return self.value[index]
     def refresh_impl(self):
         self.value = simple.List()
-        for item in self.children:
-            self.value.append(simplify(item))
+        for child in self.children:
+            result = simplify(child)
+            if isinstance(result, ItemStream):
+                for it in result:
+                    self.value.append(simplify(it))
+            else:
+                self.value.append(result)
     def get_children(self):
         return self.children

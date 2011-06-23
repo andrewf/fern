@@ -3,6 +3,7 @@ import unittest
 import fern
 from fern.ast.node import Node
 from fern.ast.map import Map, KVPair
+from fern.ast.nameref import NameRef
 from fern.ast.tools import ItemStream
 from fern.ast.list import List
 
@@ -64,3 +65,8 @@ class ItemStreamCompatibility(unittest.TestCase):
     def testBadPut(self):
         self.stream.append(14) # non kvpair is an error
         self.assertRaises(fern.errors.TypeError, self.m.put, self.stream)
+    def testReparentInStream(self):
+        self.m['var'] = 17
+        self.stream.put(KVPair('ref', NameRef('var')))
+        self.m.put(self.stream)
+        self.assertEqual(self.m['ref'], 17)

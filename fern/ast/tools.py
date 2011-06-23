@@ -2,7 +2,7 @@
 Things used temporarily when processing parse trees.
 '''
 
-from node import Node
+import node
 import fern
 
 class ItemStream(list):
@@ -10,7 +10,7 @@ class ItemStream(list):
         self.append(it)
 
 def simplify(item):
-    if isinstance(item, Node):
+    if isinstance(item, node.Node):
         return item.eval()
     elif fern.primitives.is_primitive(item):
         return item

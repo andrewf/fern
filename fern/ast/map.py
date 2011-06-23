@@ -16,19 +16,20 @@ class Map(Node):
             Node.reparent(self, item.value)
         else:
             Node.reparent(self, item)
-    def put(self,thing):
+    def put(self, thing):
+        self.reparent(thing)
         if isinstance(thing, ItemStream):
             for pair in thing:
-                self.put_pair(pair)
-        else: # assume it's a pair. put_pair handles error case
-            self.put_pair(thing)
-    def put_pair(self, kvpair):
-        if isinstance(kvpair, KVPair):
-            self.reparent(kvpair)
-            self.children.append(kvpair)
-            self.invalidate()
-        else:
-            raise errors.TypeError('trying to put non-kvpair (%s) in Map' % str(type(kvpair)))
+                if not isinstance(pair, KVPair):
+                    raise errors.TypeError('Putting itemstream in map with non-kvpairs: %s' % str(type(pair)))
+                self.children.append(pair)
+        elif isinstance(thing, KVPair):
+            self.children.append(thing)
+        elif isinstance(thing, Node):
+            # assume it's a kvpair generator
+            self.children.append(thing)
+            self.reparent(thing)
+        self.invalidate()
     def __getitem__(self, k):
         self.refresh()
         return self.value[k]
@@ -42,10 +43,11 @@ class Map(Node):
         Otherwise, add a new pair.
         '''
         for pair in reversed(self.children):
-            if pair.key == k:
-                pair.value = v
-                self.invalidate()
-                return
+            if isinstance(pair, KVPair):
+                if pair.key == k:
+                    pair.value = v
+                    self.invalidate()
+                    return
         self.put(KVPair(k, v))
     def reference_impl(self, key):
         self.refresh()
@@ -55,8 +57,19 @@ class Map(Node):
         return key in self.value
     def refresh_impl(self):
         self.value = simple.Map()
-        for pair in self.children:
+        def eval_pair(pair):
             self.value[simplify(pair.key)] = simplify(pair.value)
+        for c in self.children:
+            if isinstance(c, KVPair):
+                eval_pair(c)
+            else:
+                it = c.eval()
+                if isinstance(it, KVPair):
+                    eval_pair(it)
+                elif isinstance(it, ItemStream):
+                    for item in it:
+                        eval_pair(item)
+            
     def get_children(self):
         return self.children
             

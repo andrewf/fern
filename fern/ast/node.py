@@ -1,4 +1,5 @@
 from fern.primitives import Undefined
+import tools
 
 class Node(object):
     def __init__(self):
@@ -38,9 +39,13 @@ class Node(object):
     def reparent(self, new_child):
         '''If new_child is a Node, sets its parent to self
         
-        If it's not a node, presumably it's a primitive'''
+        If it's not a node or ItemStream, presumably it's a primitive'''
         if isinstance(new_child, Node):
             new_child.parent = self
+        elif isinstance(new_child, tools.ItemStream):
+            for c in new_child:
+                if isinstance(c,  Node):
+                    c.parent = self
     # caching
     def get_modified(self):
         '''
