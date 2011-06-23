@@ -3,6 +3,8 @@ import unittest
 import fern
 from fern.ast.node import Node
 from fern.ast.map import Map, KVPair
+from fern.ast.tools import ItemStream
+from fern.ast.list import List
 
 class TestMap(unittest.TestCase):
     def setUp(self):
@@ -46,4 +48,19 @@ class TestMap(unittest.TestCase):
         self.assertEqual(self.m['bar'], 13)
         self.assertEqual(len(self.m.children), 3)
         
-
+class ItemStreamCompatibility(unittest.TestCase):
+    def setUp(self):
+        self.stream = ItemStream([
+            KVPair(42, 'foo'),
+            KVPair('foo', 17),
+            KVPair('umm', List()),
+        ])
+        self.m = Map()
+    def testPut(self):
+        self.m.put(self.stream)
+        self.assertEqual(self.m[42], 'foo')
+        self.assertEqual(self.m['foo'], 17)
+        self.assertEqual(self.m['umm'], [])
+    def testBadPut(self):
+        self.stream.append(14) # non kvpair is an error
+        self.assertRaises(fern.errors.TypeError, self.m.put, self.stream)

@@ -1,13 +1,15 @@
 import unittest
 
 from fern.ast import tools
+from fern.primitives import Undefined, Nothing
 
 class TestItemStream(unittest.TestCase):
     def setUp(self):
-        self.s = tools.ItemStream()
-    def testPutAndAccess(self):
-        items = ['one', 2, 'three']
-        for it in items:
-            self.s.put(it)
-        for sit, it in zip(self.s, items):
-            self.assertEqual(sit, it)
+        self.data = [1, 4, 'fooz', Nothing]
+        self.s = tools.ItemStream(self.data)
+    def testEquality(self):
+        self.assertEqual(self.s, self.data)
+    def testAppend(self):
+        self.s.append(True)
+        self.data.append(True)
+        self.assertEqual(self.s, self.data)

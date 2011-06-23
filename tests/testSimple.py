@@ -92,3 +92,4 @@ class TestTruthy(unittest.TestCase):
         m = simple.Map()
         m['foo'] = 17
         self.assertTrue(simple.truthy(m))
+

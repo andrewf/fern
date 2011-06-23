@@ -1,6 +1,7 @@
+from fern import errors
 from fern.ast.node import Node
 from fern import simple
-from fern.ast.tools import simplify
+from fern.ast.tools import simplify, ItemStream
 from fern.ast.kvpair import KVPair       
 from operator import attrgetter       
 
@@ -15,10 +16,19 @@ class Map(Node):
             Node.reparent(self, item.value)
         else:
             Node.reparent(self, item)
-    def put(self, kvpair):
-        self.reparent(kvpair)
-        self.children.append(kvpair)
-        self.invalidate()
+    def put(self,thing):
+        if isinstance(thing, ItemStream):
+            for pair in thing:
+                self.put_pair(pair)
+        else: # assume it's a pair. put_pair handles error case
+            self.put_pair(thing)
+    def put_pair(self, kvpair):
+        if isinstance(kvpair, KVPair):
+            self.reparent(kvpair)
+            self.children.append(kvpair)
+            self.invalidate()
+        else:
+            raise errors.TypeError('trying to put non-kvpair (%s) in Map' % str(type(kvpair)))
     def __getitem__(self, k):
         self.refresh()
         return self.value[k]

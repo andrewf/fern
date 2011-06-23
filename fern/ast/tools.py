@@ -6,8 +6,7 @@ from node import Node
 import fern
 
 class ItemStream(list):
-    def put(self, item):
-        self.append(item)
+    pass
 
 def simplify(item):
     if isinstance(item, Node):
