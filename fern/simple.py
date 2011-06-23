@@ -43,3 +43,10 @@ class TreeNode(object):
 def is_simple(item):
     return (primitives.is_primitive(item) or
             isinstance(item, (Map, List, AbstractCall, TreeNode)))
+
+from primitives import Undefined, Nothing
+
+def truthy(item):
+    if not item or (item is Undefined) or (item is Nothing):
+        return False
+    return True

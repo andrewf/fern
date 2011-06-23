@@ -74,3 +74,21 @@ class TestIsSimple(unittest.TestCase):
         self.assertTrue(simple.is_simple(17))
         self.assertTrue(simple.is_simple('iz in ur string'))
 
+class TestTruthy(unittest.TestCase):
+    def testBoolean(self):
+        self.assertTrue(simple.truthy(True))
+        self.assertFalse(simple.truthy(False))
+    def testUndefined(self):
+        self.assertFalse(simple.truthy(primitives.Undefined))
+    def testNothing(self):
+        self.assertFalse(simple.truthy(primitives.Nothing))
+    def testEmptyString(self):
+        self.assertFalse(simple.truthy(''))
+    def testString(self):
+        self.assertTrue(simple.truthy('fff'))
+    def testEmptyMap(self):
+        self.assertFalse(simple.truthy(simple.Map()))
+    def testMap(self):
+        m = simple.Map()
+        m['foo'] = 17
+        self.assertTrue(simple.truthy(m))
