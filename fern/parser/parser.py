@@ -5,7 +5,7 @@ from StringIO import StringIO
 # setup lexer
 from plex import *
 letter = Range("AZaz")
-identifier = letter + Rep(letter | Range("09"))
+identifier = letter + Rep(letter | Range("09") | Str("_"))
 num = Rep1(Range('09'))
 string = Str("'") + Rep(AnyBut("'")) + Str("'")
 
@@ -22,6 +22,8 @@ lexicon = Lexicon([
     (Str('elif'), TEXT),
     (Str('else'), TEXT),
     (Str('end'), TEXT),
+    (Str('let'), TEXT),
+    (Str('in'), TEXT),
     (Str('true'), TEXT),
     (Str('false'), TEXT),
     (identifier, 'ident'),
@@ -137,7 +139,7 @@ class Parser(object):
         else:
             return False
     def expression(self):
-        return self.item() or self.cond_item()
+        return self.item() or self.cond_item() or self.let_item()
     def map(self):
         if not self.tokens.match(map_start):
             return False
@@ -197,12 +199,33 @@ class Parser(object):
     def cond_itemstream(self):
         "Conditional for multiple items"
         return self.cond_impl(self.itemstream)
+    def let_impl(self, fun):
+        if not self.tokens.match('let'):
+            return False
+        self.stack.start_let()
+        self.kvpairs()
+        if not self.tokens.match('in'):
+            raise SyntaxError('expected `in` after let kvpairs %s' % self.tokens.position())
+        self.stack.top.start_content()
+        fun()
+        if not self.tokens.match('end'):
+            raise SyntaxError('expected `end` after let content %s' % self.tokens.position())
+        self.stack.finish_item()
+        return True
+    def let_item(self):
+        return self.let_impl(self.item)
+    def let_itemstream(self):
+        return self.let_impl(self.items)
+    def let_kvpairs(self):
+        return self.let_impl(self.kvpairs)
     def items(self):
         'Puts a series of items in the current top object, does not create new stack frame'
         while not self.tokens.match(None): # while not EOF
             if self.item():
                 continue
             if self.cond_itemstream():
+                continue
+            if self.let_itemstream():
                 continue
             break
     def kvpairs(self):
@@ -211,6 +234,8 @@ class Parser(object):
             if self.kvpair():
                 continue
             if self.cond_kvpairs():
+                continue
+            if self.let_kvpairs():
                 continue
             break
     def itemstream(self):

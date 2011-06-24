@@ -2,6 +2,7 @@ import fern
 from fern.ast.kvpair import KVPair
 from fern.parser.errors import BuilderError
 from fern.ast.conditional import Conditional
+from fern.ast.let import Let
 
 class Builder(object):
     "semantic class, just a marker for RTTI"
@@ -38,6 +39,21 @@ class CondBuilder(Builder):
         self.expecting_else = True
     def get(self):
         return self.conditional
+
+class LetBuilder(Builder):
+    def __init__(self):
+        self.expecting = 'names'
+        self.let = Let()
+    def put(self, item):
+        if self.expecting == 'names':
+            self.let.names.put(item)
+        else:
+            self.let.put(item)
+    def start_content(self):
+        self.expecting = 'content'
+    def get(self):
+        return self.let
+        
 
 class KVPairBuilder(Builder):
     def __init__(self):
@@ -88,6 +104,8 @@ class ParseStack(object):
         self.stack.append(fern.ast.tools.ItemStream())
     def start_conditional(self):
         self.stack.append(CondBuilder())
+    def start_let(self):
+        self.stack.append(LetBuilder())
     def finish_item(self):
         if len(self.stack) > 1:
             it = self.stack.pop()
