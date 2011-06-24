@@ -28,10 +28,7 @@ class Conditional(Node):
     def refresh_impl(self):
         for c in self.conditions:
             if truthy(simplify(c[0])):
-                if isinstance(c[1], ItemStream):
-                    self.value = c[1]
-                else:
-                    self.value = simplify(c[1])
+                self.value = simplify(c[1])
                 return
         # else cond
         if isinstance(self.else_val, ItemStream):

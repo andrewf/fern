@@ -94,7 +94,10 @@ class Node(object):
             'Trying to call refresh on Node without refresh_impl')
     def eval(self):
         '''
-        Get an up-to-date version of self.value, the whole thing
+        Get an up-to-date version of self.value, the whole thing.
+        
+        If an ItemStream is returned, all elements must be fully simplified;
+        KVPairs can be left as-is.
         '''
         self.refresh()
         return self.value

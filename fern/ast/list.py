@@ -28,7 +28,7 @@ class List(Node):
             result = simplify(child)
             if isinstance(result, ItemStream):
                 for it in result:
-                    self.value.append(simplify(it))
+                    self.value.append(it)
             else:
                 self.value.append(result)
     def get_children(self):

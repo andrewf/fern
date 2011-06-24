@@ -47,9 +47,9 @@ class TestPairStream(unittest.TestCase):
     def testStream(self):
         self.c.put_cond(
             NameRef('var'),
-            ItemStream([ KVPair('ag', 56), KVPair('ug', NameRef('var')) ])
+            ItemStream([ KVPair('ag', Map()), KVPair('ug', NameRef('var')) ])
         )
-        self.assertEqual(self.scope['ag'], 56)
+        self.assertEqual(self.scope['ag'], {})
         self.assertEqual(self.scope['ug'], True)
     def testUndefinedHasNoEffect(self):
         self.scope.set_key('var', False)
