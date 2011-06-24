@@ -3,7 +3,8 @@ from fern.ast.node import Node
 from fern import simple
 from fern.ast.tools import simplify, ItemStream
 from fern.ast.kvpair import KVPair       
-from operator import attrgetter       
+from operator import attrgetter
+from fern.primitives import Undefined 
 
 class Map(Node):
     def __init__(self):
@@ -65,6 +66,10 @@ class Map(Node):
                 elif isinstance(it, ItemStream):
                     for item in it:
                         eval_pair(item)
+                elif it is Undefined:
+                    return
+                else:
+                    raise errors.TypeError('trying to put something besides KVPair or ItemStream in a map')
             
     def get_children(self):
         return self.children
