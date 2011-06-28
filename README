@@ -1,0 +1,32 @@
+Fern is a programmable data description/generation language. Besides
+the standard primitive data types, maps and lists, it has control/generative
+structures like conditionals, let-blocks, loops, and functions. It is
+meant to have a clean syntax, and to be amenable to different syntaxes.
+
+For example you can (or will be able to do) things like:
+
+let include_foo_stuff = True in
+    objects = ['fruz' 5 if include_foo_stuff then 'foo' bar' end 'quux']
+end
+
+objects2 = [for obj in objects put obj + '2' end 'I get added']
+
+If you don't care about the philosophy, just go to the examples directory.
+
+Fern was first inspired by my attempts to use Lua to generate SVG files with
+significant random components. Using Lua's control structures didn't feel
+quite natural. I had the idea of writing a vector graphics format with
+control structures, variables, and conditionals baked in. At other times,
+I've had data where I wished parts of it could be automatically generated
+from other parts. XML is a natural fit for some things, but it's far too
+verbose for my tastes. I slowly realized a single language might be able to
+satisfy all these itches. Fern is my attempt to create this language.
+
+I envision, among other things, using Fern to generate CSS (don't you wish
+you could have variables in CSS?), a build system (I always wanted to try
+one), a data format for a music-editor, among others.
+
+If that sounds absurdly ambitious, I'd be inclined to agree. Or maybe I'll
+just re-invent Lisp.  We'll have to see how it actually works out. But I
+think it will be cool. 
+
