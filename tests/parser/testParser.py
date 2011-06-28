@@ -90,3 +90,13 @@ class TestItemStream(unittest.TestCase):
         self.assertEqual(result[2].eval(), {'a':3})
         self.assertEqual(result[3].eval(), [5, 4])
 
+class TestComments(unittest.TestCase):
+    def testInRootMap(self):
+        p = Parser('''
+            -- first comment
+            foo = 23 -- 23 means nothing
+            -- all done
+        ''')
+        m = p.parse()
+        self.assertEqual(m['foo'], 23)
+

@@ -8,8 +8,10 @@ letter = Range("AZaz")
 identifier = letter + Rep(letter | Range("09") | Str("_"))
 num = Rep1(Range('09'))
 string = Str("'") + Rep(AnyBut("'")) + Str("'")
+comment = Str('--') + Rep(AnyBut('\n')) + Str('\n')
 
 lexicon = Lexicon([
+    (comment, IGNORE), # must be before directive to ignore \n below
     (Any(' \n\t'), IGNORE),
     (Str('['), TEXT),
     (Str(']'), TEXT),
