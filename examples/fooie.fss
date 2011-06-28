@@ -1,0 +1,20 @@
+-- fss here stands for Fern style sheet.
+-- here is a largely hypothetical representation of a style sheet
+let
+    color = 'purple'
+    bgcolor = 'red'
+in
+    body = {
+        @'background-color' = color
+        color = color
+    }
+    -- this use-case could benefit from a syntax allowing - in identifiers
+    @'.with-border' = {
+        @'border-color' = color
+    }
+end
+
+-- Once in memory, this structure can be easily outputted as CSS. One could
+-- add refinements like representing border styles as maps, font lists as 
+-- actual lists, something to make declaring classes and ids, etc.
+    

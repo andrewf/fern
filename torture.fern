@@ -1,9 +1,0 @@
-one = 'im a string' @'two' = 42
-@two = 17
-
-
-@'daf' = {foz = [1 1 2 3 5 8]}
-
-abc = daf
-
-

@@ -1,0 +1,10 @@
+-- no separators needed between kvpairs
+one = 'im a string' @'two' = 42
+
+-- @ uses value of following expression as key
+@two = 17
+
+@'daf' = {foz = [1 1 2 3 5 8]}
+
+abc = daf
+
