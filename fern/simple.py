@@ -35,7 +35,7 @@ class AbstractCall(object):
 class TreeNode(object):
     '''Like an XML element, only more flexible
     
-    type is analogous to the tage name
+    type is analogous to the tag name
     '''
     def __init__(self, type):
         self.type = type
