@@ -23,14 +23,6 @@ class TestMap(unittest.TestCase):
         self.m['foo'] = 17
         self.m['foo'] = primitives.Undefined
         self.failIf('foo' in self.m)
-    def testNonPrimitiveKey(self):
-        self.assertRaises(
-            fern.errors.TypeError,
-            self.m.__setitem__, NonSimple, 'random value')
-    def testNonSimpleValue(self):
-        self.assertRaises(
-            fern.errors.TypeError,
-            self.m.__setitem__, 'random key', NonSimple)
         
 class TestList(unittest.TestCase):
     def setUp(self):

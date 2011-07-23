@@ -8,10 +8,6 @@ class Map(dict):
         except KeyError:
             return primitives.Undefined
     def __setitem__(self, key, value):
-        if not primitives.is_primitive(key):
-            raise fern.errors.TypeError('Only primitive keys in maps')
-        if not is_simple(value):
-            raise fern.errors.TypeError('Only simple values in maps')
         if value is primitives.Undefined:
             if key in self:
                 del self[key]
