@@ -3,6 +3,8 @@ from fern.ast.kvpair import KVPair
 from fern.parser.errors import BuilderError
 from fern.ast.conditional import Conditional
 from fern.ast.let import Let
+from fern.ast.function import Function, FunctionCall
+from fern.ast.tools import ItemStream
 
 class Builder(object):
     "semantic class, just a marker for RTTI"
@@ -74,6 +76,40 @@ class KVPairBuilder(Builder):
             raise BuilderError("didn't put enough objects in KVPairBuilder")
         return self.pair
 
+class FunctionBuilder(Builder):
+    def __init__(self):
+        self.expecting = 'params'
+        self.params = []
+        self.fun = None
+    def start_content(self):
+        self.expecting = 'body'
+    def put(self, item):
+        if self.expecting == 'params':
+            self.params.append(item) # assuming it's a string...
+        elif self.expecting == 'body':
+            self.fun = Function(item, self.params)
+            self.expecting = None
+        else:
+            raise BuilderError('put stuff in Function after it has a body')
+    def get(self):
+        if self.fun is None:
+            raise BuilderError('didn\'t finish building Function')
+        return self.fun
+
+class FCallBuilder(Builder):
+    def __init__(self):
+        self.expecting = 'func'
+        self.func = None
+        self.args = ItemStream()
+    def put(self, item):
+        if self.expecting == 'func':
+            self.func = item
+            self.expecting = 'params'
+        else:
+            self.args.put(item)
+    def get(self):
+        return FunctionCall(self.func, self.args)    
+
 class ParseStack(object):
     def __init__(self):
         self.stack = []
@@ -106,6 +142,10 @@ class ParseStack(object):
         self.stack.append(CondBuilder())
     def start_let(self):
         self.stack.append(LetBuilder())
+    def start_function(self):
+        self.stack.append(FunctionBuilder())
+    def start_fcall(self):
+        self.stack.append(FCallBuilder())
     def finish_item(self):
         if len(self.stack) > 1:
             it = self.stack.pop()
