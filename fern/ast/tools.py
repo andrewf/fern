@@ -4,6 +4,7 @@ Things used temporarily when processing parse trees.
 
 import node
 import fern
+from fern.primitives import Nothing, Undefined
 
 class ItemStream(list):
     def put(self, it):
@@ -29,4 +30,9 @@ def simplify(thing):
         return thing.map(simplify)
     else:
         return simplify_item(thing)
+
+def truthy(item):
+    if not item or (item is Undefined) or (item is Nothing):
+        return False
+    return True
             

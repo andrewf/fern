@@ -32,10 +32,6 @@ class TestMap(unittest.TestCase):
         self.m['foo'] = 17
         self.m['foo'] = fern.primitives.Undefined
         self.failIf('foo' in self.m)
-    def testGetKeyVsGetItem(self):
-        # set up a child map
-        self.m['key'] = Map()
-        self.assertTrue(isinstance(self.m['key'], fern.simple.Map))
     def testSetKeyDoesNotAddChildren(self):
         # we need to have a nice interface for changing keys by
         # mutating KVPairs

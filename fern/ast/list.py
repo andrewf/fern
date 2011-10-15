@@ -1,5 +1,4 @@
 from node import Node
-from fern import simple
 from fern.ast.tools import simplify, ItemStream
 from fern.primitives import Undefined
 
@@ -23,7 +22,7 @@ class List(Node):
         self.refresh()
         return self.value[index]
     def refresh_impl(self):
-        self.value = simple.List()
+        self.value = []
         for child in self.children:
             result = simplify(child)
             if isinstance(result, ItemStream):

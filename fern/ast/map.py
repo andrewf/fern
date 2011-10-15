@@ -1,6 +1,5 @@
 from fern import errors
 from fern.ast.node import Node
-from fern import simple
 from fern.ast.tools import simplify, ItemStream
 from fern.ast.kvpair import KVPair       
 from operator import attrgetter
@@ -29,7 +28,10 @@ class Map(Node):
         self.invalidate()
     def __getitem__(self, k):
         self.refresh()
-        return self.value[k]
+        try:
+            return self.value[k]
+        except KeyError:
+            return Undefined
     def __setitem__(self, k, v):
         self.put(KVPair(k, v))
     def set_key(self, k, v):
@@ -48,14 +50,21 @@ class Map(Node):
         self.put(KVPair(k, v))
     def reference_impl(self, key):
         self.refresh()
-        return self.value[key]
+        try:
+            return self.value[key]
+        except KeyError:
+            return Undefined
     def __contains__(self, key):
         self.refresh()
         return key in self.value
     def refresh_impl(self):
-        self.value = simple.Map()
+        self.value = {}
         def eval_pair(pair):
-            self.value[simplify(pair.key)] = simplify(pair.value)
+            # handle Undefined behavior
+            if pair.value is Undefined and pair.key in self.value:
+                del self.value[pair.key]
+            else:
+                self.value[simplify(pair.key)] = simplify(pair.value)
         for c in self.children:
             if isinstance(c, KVPair):
                 eval_pair(c)

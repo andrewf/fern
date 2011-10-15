@@ -2,8 +2,7 @@ from operator import itemgetter
 
 from node import Node
 from fern.primitives import Undefined
-from fern.simple import truthy
-from fern.ast.tools import simplify, ItemStream
+from fern.ast.tools import simplify, ItemStream, truthy
 
 class Conditional(Node):
     '''
